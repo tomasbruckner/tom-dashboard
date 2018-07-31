@@ -1,0 +1,22 @@
+version: '3'
+services:
+  app:
+    build: docker/app
+    ports:
+      - 127.0.0.1:3333:3333
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+  db:
+    image: mysql:5.7.22
+    volumes:
+      - tom-dashboard-db-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=devdatabase
+      - MYSQL_DATABASE=tomdashboard
+
+volumes:
+  tom-dashboard-db-data:
