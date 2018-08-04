@@ -10,8 +10,8 @@ class StandupProjectRatingSchema extends Schema {
       table.foreign('standup_id').references('standups')
       table.integer('project_month_instance_id').unsigned().notNullable()
       table.foreign('project_month_instance_id').references('project_month_instances')
-      table.integer('project_rating_enum_id').unsigned().notNullable()
-      table.foreign('project_rating_enum_id').references('project_rating_enums')
+      table.integer('standup_project_rating_enum_id').unsigned().notNullable()
+      table.foreign('standup_project_rating_enum_id').references('standup_project_rating_enums')
       table.timestamps()
     })
   }

@@ -4,14 +4,24 @@
       :headers='headers'
       :items='items'
       hide-actions
+      fill-height
       class='elevation-1 fullscreen'
     >
+      <template slot="headers" slot-scope="props">
+        <tr>
+          <th v-for="h in props.headers">
+            <div class="text-xs-center header">{{ h.text }}</div>
+          </th>
+        </tr>
+      </template>
       <template slot='items' slot-scope='props'>
-        <td class='text-xs-center'>{{ new Date(props.item.standupDate).toLocaleDateString() }}</td>
+        <td class='text-xs-center element'>{{ new Date(props.item.standupDate).toLocaleDateString() }}</td>
         <td v-for='(im, itemIndex) in props.item.ratings' :key='itemIndex'>
           <project-status-picker
-            :title='`${projects[itemIndex]} - select rating for ${props.item.date}`'
-            :submit-rating='$store.commit.bind(this, props.index, itemIndex)'
+            :title='`${projects[itemIndex]? projects[itemIndex].code: ""} - select rating`'
+            :project-rating-id='im.projectRatingId'
+            :project-index='props.index'
+            :rating-index='itemIndex'
           />
         </td>
       </template>
@@ -25,19 +35,19 @@
 
   export default {
     fetch ({store, params}) {
-      const promises = [];
+      const promises = []
 
       promises.push(axios.get('http://localhost:3333/api/projects')
         .then(res => {
           store.commit('setProjects', res.data)
         })
-      );
+      )
 
       promises.push(axios.get('http://localhost:3333/api/projectRatings')
         .then(res => {
           store.commit('setProjectRatings', res.data)
         })
-      );
+      )
 
       return Promise.all(promises)
     },
@@ -84,6 +94,10 @@
   }
 
   .element {
-    font-size: 20em;
+    font-size: 1.5em !important;
+  }
+
+  .header {
+    font-size: 2em !important;
   }
 </style>

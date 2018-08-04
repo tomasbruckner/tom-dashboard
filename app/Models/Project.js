@@ -4,7 +4,7 @@ const Model = use('Model')
 
 class Project extends Model {
   static get hidden () {
-    return ['created_at', 'updated_at', 'projectStartAt', 'projectEndAt']
+    return ['created_at', 'updated_at', 'project_start_at', 'project_end_at']
   }
 
   projectMonthInstance() {

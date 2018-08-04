@@ -12,7 +12,7 @@ class StandupProjectRating extends Model {
   }
 
   projectRating () {
-    return this.belongsTo('App/Models/ProjectRatingEnum')
+    return this.belongsTo('App/Models/StandupProjectRatingEnum')
   }
 
   standup () {

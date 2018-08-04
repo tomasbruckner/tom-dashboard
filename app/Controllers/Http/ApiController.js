@@ -2,10 +2,14 @@
 
 const ProjectModel = use('App/Models/Project')
 const StandupModel = use('App/Models/Standup')
+const ProjectMonthInstanceModel = use('App/Models/ProjectMonthInstance')
+const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum')
+const StandupProjectRating = use('App/Models/StandupProjectRating')
 
 class ApiController {
   async getProjects ({request, response, session}) {
-    const currentMonth = new Date(2018, 6, 1)
+    // TODO to param
+    const currentMonth = new Date(2018, 7, 1)
 
     const projects = await ProjectModel
       .query()
@@ -16,9 +20,31 @@ class ApiController {
     return projects.toJSON()
   }
 
+  async setProjectRating ({request, response, session}) {
+    const {projectRatingId, ratingValueId} = request.body
+
+    try {
+      const [rating, ratingValue] = await Promise.all([
+        StandupProjectRating.find(projectRatingId),
+        StandupProjectRatingEnumModel.find(ratingValueId),
+      ])
+
+      rating
+        .projectRating()
+        .associate(ratingValue)
+
+      await rating.save()
+      response.status(200).send()
+    } catch (e) {
+      console.error(e)
+      response.status(404).send()
+    }
+  }
+
   async getProjectRatings ({request, response, session}) {
-    const currentMonth = new Date(2018, 6, 1)
-    const nextMonth = new Date(2018, 7, 1)
+    // TODO dynamic month from param
+    const currentMonth = new Date(2018, 7, 1)
+    const nextMonth = new Date(2018, 8, 1)
 
     const projects = await StandupModel
       .query()

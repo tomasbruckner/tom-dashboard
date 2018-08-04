@@ -8,8 +8,8 @@ class ProjectSchema extends Schema {
       table.increments()
       table.string('code').notNullable()
       table.string('description')
-      table.dateTime('projectStartAt')
-      table.dateTime('projectEndAt')
+      table.dateTime('project_start_at')
+      table.dateTime('project_end_at')
       table.timestamps()
     })
   }

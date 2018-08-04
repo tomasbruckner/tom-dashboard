@@ -30,7 +30,6 @@ class StandupProjectRatingSeeder {
   }
 
   static getRatingsForStandups (project, projectInstances, standups) {
-
     return standups.reduce((acc, s) => [
       ...acc,
       {
@@ -40,7 +39,7 @@ class StandupProjectRatingSeeder {
           project,
           projectInstances,
         ),
-        project_rating_enum_id: 0,
+        standup_project_rating_enum_id: 0,
       }
     ], [])
   }
@@ -56,8 +55,10 @@ class StandupProjectRatingSeeder {
 
       return isSameProject && isSameDate
     })
-
-    return foundProject.id;
+    if (!foundProject) {
+      console.log(project.id, projectInstances, firstDay.toString())
+    }
+    return foundProject.id
   }
 }
 

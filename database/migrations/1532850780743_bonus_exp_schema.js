@@ -9,6 +9,7 @@ class BonusExpSchema extends Schema {
       table.integer('user_id').unsigned().notNullable()
       table.foreign('user_id').references('users')
       table.string('description').notNullable()
+      table.dateTime('date').notNullable()
       table.integer('exp').notNullable()
       table.timestamps()
     })
