@@ -8,8 +8,10 @@ const StandupProjectRating = use('App/Models/StandupProjectRating')
 
 class ApiController {
   async getProjects ({request, response, session}) {
-    // TODO to param
-    const currentMonth = new Date(2018, 7, 1)
+    let {month, year} = request.get()
+    month = Number(month)
+    year = Number(year)
+    const currentMonth = new Date(year, month, 1)
 
     const projects = await ProjectModel
       .query()
@@ -42,9 +44,11 @@ class ApiController {
   }
 
   async getProjectRatings ({request, response, session}) {
-    // TODO dynamic month from param
-    const currentMonth = new Date(2018, 7, 1)
-    const nextMonth = new Date(2018, 8, 1)
+    let {month, year} = request.get()
+    month = Number(month)
+    year = Number(year)
+    const currentMonth = new Date(year, month, 1)
+    const nextMonth = new Date(year, month + 1, 1)
 
     const projects = await StandupModel
       .query()

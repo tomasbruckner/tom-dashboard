@@ -36,14 +36,26 @@
   export default {
     fetch ({store, params}) {
       const promises = []
-
-      promises.push(axios.get('http://localhost:3333/api/projects')
+      const date = new Date()
+      promises.push(axios.get('/api/projects',
+        {
+          params: {
+            month: date.getMonth(),
+            year: date.getFullYear(),
+          }
+        })
         .then(res => {
           store.commit('setProjects', res.data)
         })
       )
 
-      promises.push(axios.get('http://localhost:3333/api/projectRatings')
+      promises.push(axios.get('/api/projectRatings',
+        {
+          params: {
+            month: date.getMonth(),
+            year: date.getFullYear(),
+          }
+        })
         .then(res => {
           store.commit('setProjectRatings', res.data)
         })
