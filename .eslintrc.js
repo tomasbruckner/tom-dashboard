@@ -21,7 +21,7 @@ module.exports = {
     // do not allow console.logs etc...
     'no-console': 0,
     'semi': 0,
-    'comma-dangle': 0,
+    'comma-dangle': ['error', 'always-multiline'],
     'no-unused-vars': 0,
     'space-before-function-paren': 0,
     'comma-spacing': 0,

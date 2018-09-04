@@ -40,7 +40,7 @@ class StandupProjectRatingSeeder {
           projectInstances,
         ),
         standup_project_rating_enum_id: 0,
-      }
+      },
     ], [])
   }
 

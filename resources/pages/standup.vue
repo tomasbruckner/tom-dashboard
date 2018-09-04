@@ -15,10 +15,10 @@
         </tr>
       </template>
       <template slot='items' slot-scope='props'>
-        <td class='text-xs-center element'>{{ new Date(props.item.standupDate).toLocaleDateString() }}</td>
+        <td class='text-xs-center element'>{{ formatDate(props.item.standupDate) }}</td>
         <td v-for='(im, itemIndex) in props.item.ratings' :key='itemIndex'>
           <project-status-picker
-            :title='`${projects[itemIndex]? projects[itemIndex].code: ""} - select rating`'
+            :title='`${projectInstances[itemIndex]? projectInstances[itemIndex].code: ""} - select rating`'
             :project-rating-id='im.projectRatingId'
             :project-index='props.index'
             :rating-index='itemIndex'
@@ -32,21 +32,23 @@
 <script>
   import axios from '~/plugins/axios'
   import ProjectStatusPicker from '../components/ProjectStatusPicker'
+  import format from 'date-fns/format'
+  import { mapState } from 'vuex'
 
   export default {
-    fetch ({store, params}) {
+    fetch({ store, params }) {
       const promises = []
       const date = new Date()
-      promises.push(axios.get('/api/projects',
+      promises.push(axios.get('/api/projectsInstances',
         {
           params: {
             month: date.getMonth(),
             year: date.getFullYear(),
-          }
+          },
         })
         .then(res => {
-          store.commit('setProjects', res.data)
-        })
+          store.commit('setProjectsInstances', res.data)
+        }),
       )
 
       promises.push(axios.get('/api/projectRatings',
@@ -54,16 +56,21 @@
           params: {
             month: date.getMonth(),
             year: date.getFullYear(),
-          }
+          },
         })
         .then(res => {
           store.commit('setProjectRatings', res.data)
-        })
+        }),
       )
 
       return Promise.all(promises)
     },
     computed: {
+      ...mapState([
+        'items',
+        'projects',
+        'projectInstances',
+      ]),
       headers: function () {
         const projects = this.projects.map(project => ({
           text: project.code,
@@ -79,23 +86,23 @@
             sortable: false,
             value: 'Datum',
           },
-          ...projects
+          ...projects,
         ]
-      }
+      },
     },
-    data () {
-      return {
-        ...this.$store.state,
-      }
+    data() {
+      return {}
     },
     methods: {
-      submitRating (project, rating) {
-        console.log(project, rating)
+      formatDate(date) {
+        const d = new Date(date)
+
+        return format(d, 'DD/MM/YYYY')
       },
     },
     components: {
       ProjectStatusPicker,
-    }
+    },
   }
 </script>
 

@@ -31,42 +31,42 @@
         <v-card-text class="myicon">
           <v-icon
             large
-            class="material-icons custom-font-size"
+            class="material-icons custom-picker-font-size"
             @click="submit('HIATUS')"
           >
             remove
           </v-icon>
           <v-icon
             large
-            class="material-icons red800 custom-font-size"
+            class="material-icons red800 custom-picker-font-size"
             @click="submit('FAIL')"
           >
             close
           </v-icon>
           <v-icon
             large
-            class="material-icons red800 custom-font-size"
+            class="material-icons red800 custom-picker-font-size"
             @click="submit('BAD')"
           >
             radio_button_unchecked
           </v-icon>
           <v-icon
             large
-            class="material-icons blue500 custom-font-size"
+            class="material-icons blue500 custom-picker-font-size"
             @click="submit('STANDARD')"
           >
             radio_button_unchecked
           </v-icon>
           <v-icon
             large
-            class="material-icons green500 custom-font-size"
+            class="material-icons green500 custom-picker-font-size"
             @click="submit('GOOD')"
           >
             radio_button_unchecked
           </v-icon>
           <v-icon
             large
-            class="material-icons green500 custom-font-size"
+            class="material-icons green500 custom-picker-font-size"
             @click="submit('AMAZING')"
           >
             done
@@ -79,22 +79,26 @@
 
 <script>
   import axios from '~/plugins/axios'
+  import { mapState } from 'vuex'
 
   export default {
     props: ['projectIndex', 'ratingIndex', 'projectRatingId', 'title'],
-    data () {
+    data() {
       return {
         dialog: false,
         className: 'material-icons',
       }
     },
     computed: {
+      ...mapState([
+        'items',
+      ]),
       icon: function () {
         return this.getRatingIconFromId(this.iconId)
       },
       iconId: function () {
-        return this.$store.state.items[this.projectIndex].ratings[this.ratingIndex].ratingValue
-      }
+        return this.items[this.projectIndex].ratings[this.ratingIndex].ratingValue
+      },
     },
     methods: {
       getClassName: function () {
@@ -123,7 +127,7 @@
           const ratingValue = this.getRatingId(icon)
           const ratingData = {
             projectRatingId: this.projectRatingId,
-            ratingValueId: ratingValue
+            ratingValueId: ratingValue,
           }
 
           const payload = {
@@ -186,7 +190,7 @@
           case 5:
             return 'done'
         }
-      }
+      },
     },
   }
 </script>
@@ -196,6 +200,10 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+  }
+
+  .material-icons.custom-picker-font-size {
+    font-size: 1200% !important;
   }
 
   .material-icons.custom-font-size {

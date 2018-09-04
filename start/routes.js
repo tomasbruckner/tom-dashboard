@@ -16,6 +16,10 @@
 const Route = use('Route')
 
 Route.get('/api/projects', 'ApiController.getProjects')
+Route.post('/api/projects', 'ApiController.addProject').validator('StoreProject')
+Route.put('/api/projects/:id', 'ApiController.editProject').validator('StoreProject')
+Route.delete('/api/projects/:id', 'ApiController.deleteProject')
+Route.get('/api/projectsInstances', 'ApiController.getProjectsWithInstances')
 Route.get('/api/projectRatings', 'ApiController.getProjectRatings')
 Route.post('/api/projectRating', 'ApiController.setProjectRating')
 

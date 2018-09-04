@@ -29,7 +29,7 @@
       <v-toolbar-title v-text="title"></v-toolbar-title>
     </v-toolbar>
     <v-content>
-        <nuxt />
+      <nuxt/>
     </v-content>
     <v-navigation-drawer
       temporary
@@ -51,20 +51,21 @@
 
 <script>
   export default {
-    data () {
+    data() {
       return {
         clipped: true,
         drawer: false,
         fixed: false,
         items: [
           { icon: 'apps', title: 'Welcome', to: '/' },
-          { icon: 'bubble_chart', title: 'Standup', to: '/standup' },
+          { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
+          { icon: 'laptop_windows', title: 'Projekty', to: '/projects' },
         ],
         miniVariant: false,
         right: true,
         rightDrawer: false,
-        title: 'From zero to hero!'
+        title: 'From zero to hero!',
       }
-    }
+    },
   }
 </script>
