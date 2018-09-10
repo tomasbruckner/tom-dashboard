@@ -1,6 +1,9 @@
 'use strict'
 
+const addMonths = require('date-fns/add_months')
+const Database = use('Database')
 const ProjectModel = use('App/Models/Project')
+const ProjectMonthInstanceModel = use('App/Models/ProjectMonthInstance')
 const StandupModel = use('App/Models/Standup')
 const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum')
 const StandupProjectRating = use('App/Models/StandupProjectRating')
@@ -30,10 +33,24 @@ class ApiController {
     }
   }
 
+  static async generateRatingsForNewProject(project) {
+    const startDate = project.project_start_at ? new Date(project.project_start_at) : new Date()
+    const endDate = project.project_end_at ? new Date(project.project_end_at) : new Date(2019, 1, 0)
+    const monthInstancesMap = {}
+
+    for (let date = startDate; date < endDate; date = addMonths(date, 1)) {
+      const fullYear = date.getFullYear()
+      const month = date.getMonth()
+      const monthInstance = { month: new Date(fullYear, month, 1) }
+      await project.projectMonthInstance().create(monthInstance)
+    }
+  }
+
   async addProject({ request, response }) {
     const project = new ProjectModel()
     project.fill(ApiController.getProjectData(request))
     await project.save()
+    await ApiController.generateRatingsForNewProject(project)
 
     return project.toJSON()
   }
