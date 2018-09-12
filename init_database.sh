@@ -3,6 +3,7 @@
 set -e
 
 npx adonis migration:run --force
+npx adonis seed --files='TruncateSeeder.js' --force
 npx adonis seed --files='ProjectExpModifierSeeder.js' --force
 npx adonis seed --files='ProjectSeeder.js' --force
 npx adonis seed --files='StandupProjectRatingEnumSeeder.js' --force
