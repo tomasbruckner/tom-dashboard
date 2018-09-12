@@ -6,12 +6,18 @@ export const state = () => ({
   projects: [],
 })
 
+const sortByProperty = function (property, a, b) {
+  return a[property] > b[property] ? 1
+    : a[property] === b[property] ? 0 : -1
+}
+
 const getRatings = (standup) => {
   return standup.standupProjectRating.map(r => ({
     projectInstanceId: r.project_month_instance_id,
     ratingValue: r.standup_project_rating_enum_id,
     projectRatingId: r.id,
-  })).sort((a, b) => a.projectInstanceId > b.projectInstanceId)
+    projectCode: r.projectMonthInstance.project.code,
+  })).sort(sortByProperty.bind(this, 'projectCode'))
 }
 
 export const mutations = {
@@ -30,24 +36,23 @@ export const mutations = {
       description: p.description,
       projectStartAt: p.project_start_at,
       projectEndAt: p.project_end_at,
-    })).sort((a, b) => a.code > b.code)
+    })).sort(sortByProperty.bind(this, 'code'))
   },
   setProjectsInstances(state, projects) {
     state.projectInstances = projects.map(p => ({
       id: p.id,
       projectInstanceId: p.projectMonthInstance[0].id,
       code: p.code,
-    })).sort((a, b) => a.projectInstanceId > b.projectInstanceId)
+    })).sort(sortByProperty.bind(this, 'projectInstanceId'))
   },
   setProjectRatings(state, items) {
     state.items = items.map(i => ({
       standupDate: i.date,
       standupId: i.standupProjectRating[0].standup_id,
       ratings: getRatings(i),
-    })).sort((a, b) => a.date > b.date)
+    })).sort(sortByProperty.bind(this, 'date'))
   },
   updateProjectRating(state, project) {
-
   },
 }
 

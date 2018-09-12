@@ -77,7 +77,7 @@
           text: project.code,
           align: 'center',
           sortable: false,
-          value: project.id,
+          value: project.code,
         }))
 
         return [
