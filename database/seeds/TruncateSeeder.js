@@ -23,9 +23,9 @@ class TruncateSeeder {
     await ProjectExpModifierModel.truncate()
     await UserModel.truncate()
     await StandupProjectRatingModel.truncate()
+    await ProjectMonthInstanceModel.truncate()
     await ProjectModel.truncate()
     await StandupModel.truncate()
-    await ProjectMonthInstanceModel.truncate()
     await StandupProjectRatingEnumModel.truncate()
   }
 }
