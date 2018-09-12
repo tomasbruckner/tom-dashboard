@@ -48,6 +48,7 @@
         })
         .then(res => {
           store.commit('setProjectsInstances', res.data)
+          store.commit('setProjects', res.data)
         }),
       )
 
