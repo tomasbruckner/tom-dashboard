@@ -44,6 +44,34 @@ class ApiController {
       const monthInstance = { month: new Date(fullYear, month, 1) }
       await project.projectMonthInstance().create(monthInstance)
     }
+
+    await ApiController.generateRatings(project)
+  }
+
+  static async generateRatings(project) {
+    const monthInstances = await project.projectMonthInstance().fetch()
+    const projectRatingEnum = await StandupProjectRatingEnumModel.find(0)
+
+    for (let i = 0; i < monthInstances.rows.length; i++) {
+      const startDate = new Date(monthInstances.rows[i].month)
+      const endDate = addMonths(startDate, 1)
+      const standups = await StandupModel
+        .query()
+        .where('date', '>=', startDate)
+        .where('date', '<', endDate)
+        .fetch()
+
+      for (let j = 0; j < standups.rows.length; j++) {
+        const r = new StandupProjectRating()
+
+        // this is slow, but there is no better option right now
+        // https://forum.adonisjs.com/t/two-or-more-nonnullable-associations/1827
+        await r.save()
+        await r.projectMonthInstance().associate(monthInstances.rows[i])
+        await r.projectRating().associate(projectRatingEnum)
+        await r.standup().associate(standups.rows[j])
+      }
+    }
   }
 
   async addProject({ request, response }) {
