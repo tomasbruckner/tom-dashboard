@@ -20,13 +20,13 @@ const UserModel = use('App/Models/User')
 
 class TruncateSeeder {
   async run () {
-    await ProjectExpModifierModel.truncate()
-    await UserModel.truncate()
-    await StandupProjectRatingModel.truncate()
-    await ProjectMonthInstanceModel.truncate()
-    await ProjectModel.truncate()
-    await StandupModel.truncate()
-    await StandupProjectRatingEnumModel.truncate()
+    await ProjectExpModifierModel.query().delete()
+    await UserModel.query().delete()
+    await StandupProjectRatingModel.query().delete()
+    await ProjectMonthInstanceModel.query().delete()
+    await ProjectModel.query().delete()
+    await StandupModel.query().delete()
+    await StandupProjectRatingEnumModel.query().delete()
   }
 }
 
