@@ -21,12 +21,12 @@ const UserModel = use('App/Models/User')
 class TruncateSeeder {
   async run () {
     await ProjectExpModifierModel.truncate()
-    await ProjectMonthInstanceModel.truncate()
-    await ProjectModel.truncate()
-    await StandupProjectRatingEnumModel.truncate()
-    await StandupProjectRatingModel.truncate()
-    await StandupModel.truncate()
     await UserModel.truncate()
+    await StandupProjectRatingModel.truncate()
+    await ProjectModel.truncate()
+    await StandupModel.truncate()
+    await ProjectMonthInstanceModel.truncate()
+    await StandupProjectRatingEnumModel.truncate()
   }
 }
 
