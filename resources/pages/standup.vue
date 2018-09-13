@@ -118,6 +118,6 @@
   }
 
   .header {
-    font-size: 2em !important;
+    font-size: 3em !important;
   }
 </style>

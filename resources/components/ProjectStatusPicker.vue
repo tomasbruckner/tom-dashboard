@@ -207,7 +207,7 @@
   }
 
   .material-icons.custom-font-size {
-    font-size: 300% !important;
+    font-size: 500% !important;
   }
 
   .material-icons.red800 {
