@@ -18,7 +18,7 @@
         <td class='text-xs-center element'>{{ formatDate(props.item.standupDate) }}</td>
         <td v-for='(im, itemIndex) in props.item.ratings' :key='itemIndex'>
           <project-status-picker
-            :title='`${projectInstances[itemIndex]? projectInstances[itemIndex].code: ""} - select rating`'
+            :title='`${im.projectCode? im.projectCode: ""} - select rating`'
             :project-rating-id='im.projectRatingId'
             :project-index='props.index'
             :rating-index='itemIndex'
