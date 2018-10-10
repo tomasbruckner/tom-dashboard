@@ -1,9 +1,6 @@
 'use strict'
 
-const addMonths = require('date-fns/add_months')
-const Database = use('Database')
 const ProjectModel = use('App/Models/Project')
-const ProjectMonthInstanceModel = use('App/Models/ProjectMonthInstance')
 const StandupModel = use('App/Models/Standup')
 const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum')
 const StandupProjectRating = use('App/Models/StandupProjectRating')
@@ -12,6 +9,7 @@ class ApiController {
   async getProjects({ request, response, session }) {
     const projects = await ProjectModel
       .query()
+      .where('is_active', true)
       .fetch()
 
     return projects.toJSON()
@@ -33,52 +31,10 @@ class ApiController {
     }
   }
 
-  static async generateRatingsForNewProject(project) {
-    const startDate = project.project_start_at ? new Date(project.project_start_at) : new Date()
-    const endDate = project.project_end_at ? new Date(project.project_end_at) : new Date(2019, 1, 0)
-    const monthInstancesMap = {}
-
-    for (let date = startDate; date < endDate; date = addMonths(date, 1)) {
-      const fullYear = date.getFullYear()
-      const month = date.getMonth()
-      const monthInstance = { month: new Date(fullYear, month, 1) }
-      await project.projectMonthInstance().create(monthInstance)
-    }
-
-    await ApiController.generateRatings(project)
-  }
-
-  static async generateRatings(project) {
-    const monthInstances = await project.projectMonthInstance().fetch()
-    const projectRatingEnum = await StandupProjectRatingEnumModel.find(0)
-
-    for (let i = 0; i < monthInstances.rows.length; i++) {
-      const startDate = new Date(monthInstances.rows[i].month)
-      const endDate = addMonths(startDate, 1)
-      const standups = await StandupModel
-        .query()
-        .where('date', '>=', startDate)
-        .where('date', '<', endDate)
-        .fetch()
-
-      for (let j = 0; j < standups.rows.length; j++) {
-        const r = new StandupProjectRating()
-
-        // this is slow, but there is no better option right now
-        // https://forum.adonisjs.com/t/two-or-more-nonnullable-associations/1827
-        await r.save()
-        await r.projectMonthInstance().associate(monthInstances.rows[i])
-        await r.projectRating().associate(projectRatingEnum)
-        await r.standup().associate(standups.rows[j])
-      }
-    }
-  }
-
   async addProject({ request, response }) {
     const project = new ProjectModel()
     project.fill(ApiController.getProjectData(request))
     await project.save()
-    await ApiController.generateRatingsForNewProject(project)
 
     return project.toJSON()
   }
@@ -112,9 +68,8 @@ class ApiController {
 
     const projects = await ProjectModel
       .query()
-      .with('projectMonthInstance', builder => {
-        builder.where('month', currentMonth)
-      }).fetch()
+      .where('is_active', true)
+      .fetch()
 
     return projects.toJSON()
   }
@@ -152,9 +107,7 @@ class ApiController {
       .where('date', '>=', currentMonth)
       .where('date', '<', nextMonth)
       .with('standupProjectRating', builder => {
-        builder.with('projectMonthInstance', builder => {
-          builder.with('project')
-        })
+        builder.with('project')
       }).fetch()
 
     return projects.toJSON()

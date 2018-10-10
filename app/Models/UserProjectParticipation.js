@@ -15,8 +15,8 @@ class UserProjectParticipation extends Model {
     return this.belongsTo('App/Models/ProjectExpModifier')
   }
 
-  projectMonthInstance () {
-    return this.belongsTo('App/Models/ProjectMonthInstance')
+  project () {
+    return this.belongsTo('App/Models/Project')
   }
 }
 

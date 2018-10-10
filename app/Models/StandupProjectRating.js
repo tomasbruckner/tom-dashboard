@@ -7,8 +7,8 @@ class StandupProjectRating extends Model {
     return ['created_at', 'updated_at']
   }
 
-  projectMonthInstance () {
-    return this.belongsTo('App/Models/ProjectMonthInstance')
+  project () {
+    return this.belongsTo('App/Models/Project')
   }
 
   projectRating () {
