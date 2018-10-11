@@ -6,32 +6,34 @@ const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum')
 const StandupProjectRating = use('App/Models/StandupProjectRating')
 
 class ApiController {
-  async getProjects({ request, response, session }) {
-    const projects = await ProjectModel
-      .query()
-      .where('is_active', true)
-      .fetch()
-
-    return projects.toJSON()
-  }
-
-  static getProjectData(request) {
+  static getProjectData (request) {
     const {
       code,
       description,
-      projectStartAt,
-      projectEndAt,
-    } = request.only(['code', 'description', 'projectStartAt', 'projectEndAt'])
+      isActive,
+    } = request.only(['code', 'description', 'isActive'])
 
     return {
       code,
       description,
-      project_start_at: projectStartAt,
-      project_end_at: projectEndAt,
+      is_active: isActive,
     }
   }
 
-  async addProject({ request, response }) {
+  async getProjects ({ request, response, params }) {
+    const { isActive } = params
+    const projectsQuery = ProjectModel.query()
+
+    if (typeof isActive === 'boolean') {
+      projectsQuery.where('is_active', isActive)
+    }
+
+    const projects = await projectsQuery.fetch()
+
+    return projects.toJSON()
+  }
+
+  async addProject ({ request, response }) {
     const project = new ProjectModel()
     project.fill(ApiController.getProjectData(request))
     await project.save()
@@ -39,7 +41,7 @@ class ApiController {
     return project.toJSON()
   }
 
-  async editProject({ request, response, params }) {
+  async editProject ({ request, response, params }) {
     const { id } = params
     const project = await ProjectModel.find(id)
     project.merge(ApiController.getProjectData(request))
@@ -48,7 +50,7 @@ class ApiController {
     return project.toJSON()
   }
 
-  async deleteProject({ request, response, params }) {
+  async deleteProject ({ request, response, params }) {
     const { id } = params
     const project = await ProjectModel.find(id)
 
@@ -60,26 +62,13 @@ class ApiController {
     }
   }
 
-  async getProjectsWithInstances({ request, response, session }) {
-    let { month, year } = request.get()
-    month = Number(month)
-    year = Number(year)
-    const currentMonth = new Date(year, month, 1)
-
-    const projects = await ProjectModel
-      .query()
-      .where('is_active', true)
-      .fetch()
-
-    return projects.toJSON()
-  }
-
-  async setProjectRating({ request, response, session }) {
-    const { projectRatingId, ratingValueId } = request.body
+  async setProjectRating ({ request, response, session }) {
+    const { projectId, standupId, ratingValueId } = request.body
 
     try {
+      const ratingData = { project_id: projectId, standup_id: standupId }
       const [rating, ratingValue] = await Promise.all([
-        StandupProjectRating.find(projectRatingId),
+        StandupProjectRating.findOrCreate(ratingData, ratingData),
         StandupProjectRatingEnumModel.find(ratingValueId),
       ])
 
@@ -95,7 +84,7 @@ class ApiController {
     }
   }
 
-  async getProjectRatings({ request, response, session }) {
+  async getProjectRatings ({ request, response, session }) {
     let { month, year } = request.get()
     month = Number(month)
     year = Number(year)
@@ -106,11 +95,30 @@ class ApiController {
       .query()
       .where('date', '>=', currentMonth)
       .where('date', '<', nextMonth)
-      .with('standupProjectRating', builder => {
-        builder.with('project')
-      }).fetch()
+      .with('standupProjectRating')
+      .fetch()
 
     return projects.toJSON()
+  }
+
+  async addStandup ({ request, response, params }) {
+    const standup = new StandupModel()
+    standup.date = new Date()
+    await standup.save()
+
+    return standup.toJSON()
+  }
+
+  async deleteStandup ({ request, response, params }) {
+    const { id } = params
+    const standup = await StandupModel.find(id)
+
+    try {
+      await standup.delete()
+      response.send()
+    } catch (e) {
+      return e.toJSON()
+    }
   }
 }
 

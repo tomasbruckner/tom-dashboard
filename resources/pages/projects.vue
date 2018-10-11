@@ -16,57 +16,11 @@
               <v-flex xs12 sm6 md4>
                 <v-text-field v-model="modalItem.description" label="Popis"></v-text-field>
               </v-flex>
-
               <v-flex xs12 sm6 md4>
-                <v-dialog
-                  ref="dialogStart"
-                  v-model="modalProjectStart"
-                  :return-value.sync="modalItem.projectStartAt"
-                  persistent
-                  lazy
-                  full-width
-                  width="290px"
-                >
-                  <v-text-field
-                    slot="activator"
-                    v-model="modalItem.projectStartAt"
-                    label="Začátek projektu"
-                    append-icon="event"
-                    readonly
-                  ></v-text-field>
-                  <v-date-picker v-model="modalItem.projectStartAt" scrollable>
-                    <v-spacer></v-spacer>
-                    <v-btn flat color="primary" @click="modalProjectStart = false">Cancel</v-btn>
-                    <v-btn flat color="primary" @click="$refs.dialogStart.save(modalItem.projectStartAt)">OK</v-btn>
-                    <v-btn flat color="primary" @click="$refs.dialogStart.save(null)">Reset</v-btn>
-                  </v-date-picker>
-                </v-dialog>
-              </v-flex>
-
-              <v-flex xs12 sm6 md4>
-                <v-dialog
-                  ref="dialogEnd"
-                  v-model="modalProjectEnd"
-                  :return-value.sync="modalItem.projectEndAt"
-                  persistent
-                  lazy
-                  full-width
-                  width="290px"
-                >
-                  <v-text-field
-                    slot="activator"
-                    v-model="modalItem.projectEndAt"
-                    label="Konec projektu"
-                    append-icon="event"
-                    readonly
-                  ></v-text-field>
-                  <v-date-picker v-model="modalItem.projectEndAt" scrollable>
-                    <v-spacer></v-spacer>
-                    <v-btn flat color="primary" @click="modalProjectEnd = false">Cancel</v-btn>
-                    <v-btn flat color="primary" @click="$refs.dialogEnd.save(modalItem.projectEndAt)">OK</v-btn>
-                    <v-btn flat color="primary" @click="$refs.dialogEnd.save(null)">Reset</v-btn>
-                  </v-date-picker>
-                </v-dialog>
+                <v-checkbox
+                  label="Aktivní"
+                  v-model="modalItem.isActive"
+                ></v-checkbox>
               </v-flex>
             </v-layout>
           </v-container>
@@ -91,8 +45,7 @@
       <template slot='items' slot-scope='props'>
         <td class='text-xs-center element'>{{ props.item.code }}</td>
         <td class='text-xs-center element'>{{ props.item.description }}</td>
-        <td class='text-xs-center element'>{{ formatDate(props.item.projectStartAt) }}</td>
-        <td class='text-xs-center element'>{{ formatDate(props.item.projectEndAt) }}</td>
+        <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
         <td class="justify-center layout px-0">
           <v-icon
             small
@@ -143,16 +96,10 @@
             value: 'description',
           },
           {
-            text: 'Začátek projektu',
+            text: 'Aktivní',
             align: 'center',
             sortable: true,
-            value: 'projectStartAt',
-          },
-          {
-            text: 'Konec projektu',
-            align: 'center',
-            sortable: true,
-            value: 'projectEndAt',
+            value: 'isActive',
           },
           {
             text: 'Akce',
@@ -175,18 +122,14 @@
           id: null,
           code: '',
           description: '',
-          projectStartAt: null,
-          projectEndAt: null,
+          isActive: true,
         },
         defaultModalItem: {
           id: null,
           code: '',
           description: '',
-          projectStartAt: null,
-          projectEndAt: null,
+          isActive: true,
         },
-        modalProjectStart: false,
-        modalProjectEnd: false,
       }
     },
     methods: {
@@ -195,8 +138,7 @@
           id: item.id,
           code: item.code,
           description: item.description,
-          projectStartAt: item.projectStartAt,
-          projectEndAt: item.projectEndAt,
+          isActive: item.isActive,
         }
         this.dialog = true
       },

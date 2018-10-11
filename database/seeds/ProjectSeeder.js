@@ -22,55 +22,55 @@ class ProjectSeeder {
     return [
       {
         code: 'ETS',
-        active: true,
+        is_active: true,
       },
       {
         code: 'EMB',
-        active: true,
+        is_active: true,
       },
       {
         code: 'GEB',
-        active: true,
+        is_active: true,
       },
       {
         code: 'TFP',
-        active: true,
+        is_active: true,
       },
       {
         code: 'SEAL',
-        active: true,
+        is_active: true,
       },
       {
         code: 'CDC',
-        active: true,
+        is_active: true,
       },
       {
         code: 'BGT',
-        active: true,
+        is_active: true,
       },
       {
         code: 'FUND',
-        active: true,
+        is_active: true,
       },
       {
         code: 'ORCH',
-        active: true,
+        is_active: true,
       },
       {
         code: 'MYP',
-        active: true,
+        is_active: true,
       },
       {
         code: 'STR',
-        active: true,
+        is_active: true,
       },
       {
         code: 'RED',
-        active: true,
+        is_active: true,
       },
       {
         code: 'AB',
-        active: true,
+        is_active: true,
       },
     ]
   }

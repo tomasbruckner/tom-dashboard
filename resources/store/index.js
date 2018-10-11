@@ -1,7 +1,6 @@
 import axios from '~/plugins/axios'
 
 export const state = () => ({
-  projectInstances: [],
   items: [],
   projects: [],
 })
@@ -34,16 +33,8 @@ export const mutations = {
       id: p.id,
       code: p.code,
       description: p.description,
-      projectStartAt: p.project_start_at,
-      projectEndAt: p.project_end_at,
+      isActive: p.is_active === 1,
     })).sort(sortByProperty.bind(this, 'code'))
-  },
-  setProjectsInstances(state, projects) {
-    state.projectInstances = projects.map(p => ({
-      id: p.id,
-      projectInstanceId: p.projectMonthInstance[0].id,
-      code: p.code,
-    })).sort(sortByProperty.bind(this, 'projectInstanceId'))
   },
   setProjectRatings(state, items) {
     state.items = items.map(i => ({
