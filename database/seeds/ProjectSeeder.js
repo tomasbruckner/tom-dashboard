@@ -33,10 +33,6 @@ class ProjectSeeder {
         is_active: true,
       },
       {
-        code: 'TFP',
-        is_active: true,
-      },
-      {
         code: 'SEAL',
         is_active: true,
       },
@@ -57,19 +53,7 @@ class ProjectSeeder {
         is_active: true,
       },
       {
-        code: 'MYP',
-        is_active: true,
-      },
-      {
         code: 'STR',
-        is_active: true,
-      },
-      {
-        code: 'RED',
-        is_active: true,
-      },
-      {
-        code: 'AB',
         is_active: true,
       },
     ]

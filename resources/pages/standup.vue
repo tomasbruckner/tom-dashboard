@@ -1,8 +1,10 @@
 <template>
   <v-layout column justify-center align-center>
+    <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
+
     <v-data-table
       :headers='headers'
-      :items='items'
+      :items='rows'
       hide-actions
       fill-height
       class='elevation-1 fullscreen'
@@ -14,15 +16,15 @@
           </th>
         </tr>
       </template>
-      <template slot='items' slot-scope='props'>
-        <td class='text-xs-center element'>{{ formatDate(props.item.standupDate) }}</td>
-        <td v-for='(im, itemIndex) in props.item.ratings' :key='itemIndex'>
-          <project-status-picker
-            :title='`${im.projectCode? im.projectCode: ""} - select rating`'
-            :project-rating-id='im.projectRatingId'
-            :project-index='props.index'
-            :rating-index='itemIndex'
-          />
+      <template slot='items' slot-scope='{ item }'>
+        <td class='text-xs-center element'>{{ formatDate(item.standup.date) }}</td>
+
+        <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
+        <project-status-picker
+        :project-rating='i.rating'
+        :project-id='i.projectId'
+        :standup-index='i.standupId'
+        />
         </td>
       </template>
     </v-data-table>
@@ -36,30 +38,24 @@
   import { mapState } from 'vuex'
 
   export default {
-    fetch({ store, params }) {
+    fetch ({ store, params }) {
       const promises = []
       const date = new Date()
-      promises.push(axios.get('/api/projectsInstances',
-        {
-          params: {
-            month: date.getMonth(),
-            year: date.getFullYear(),
-          },
-        })
-        .then(res => {
-          store.commit('setProjectsInstances', res.data)
+      const dateParams = {
+        month: date.getMonth(),
+        year: date.getFullYear(),
+      }
+
+      promises.push(axios.get('/api/projects',
+        { params: dateParams },
+        ).then(res => {
           store.commit('setProjects', res.data)
         }),
       )
 
       promises.push(axios.get('/api/projectRatings',
-        {
-          params: {
-            month: date.getMonth(),
-            year: date.getFullYear(),
-          },
-        })
-        .then(res => {
+        { params: dateParams },
+        ).then(res => {
           store.commit('setProjectRatings', res.data)
         }),
       )
@@ -68,9 +64,8 @@
     },
     computed: {
       ...mapState([
-        'items',
         'projects',
-        'projectInstances',
+        'standupRatings',
       ]),
       headers: function () {
         const projects = this.projects.map(project => ({
@@ -90,15 +85,34 @@
           ...projects,
         ]
       },
+      rows: function () {
+        return this.standupRatings.map(standup => ({
+          standup: {
+            id: standup.id,
+            date: standup.date,
+          },
+          ratings: this.getRatings(standup.id),
+        }))
+      },
     },
-    data() {
+    data () {
       return {}
     },
     methods: {
-      formatDate(date) {
+      formatDate (date) {
         const d = new Date(date)
 
         return format(d, 'DD/MM/YYYY')
+      },
+      getRatings(standupId) {
+        return this.projects.map(p => ({
+          standupId,
+          projectId: p.id,
+          rating: 0,
+        }));
+      },
+      async createStandup(i) {
+        await this.$store.dispatch('createStandup')
       },
     },
     components: {

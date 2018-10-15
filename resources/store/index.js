@@ -1,8 +1,9 @@
 import axios from '~/plugins/axios'
 
 export const state = () => ({
-  items: [],
   projects: [],
+  standups: [],
+  standupRatings: {},
 })
 
 const sortByProperty = function (property, a, b) {
@@ -10,17 +11,18 @@ const sortByProperty = function (property, a, b) {
     : a[property] === b[property] ? 0 : -1
 }
 
-const getRatings = (standup) => {
-  return standup.standupProjectRating.map(r => ({
-    projectInstanceId: r.project_month_instance_id,
-    ratingValue: r.standup_project_rating_enum_id,
-    projectRatingId: r.id,
-    projectCode: r.projectMonthInstance.project.code,
-  })).sort(sortByProperty.bind(this, 'projectCode'))
+const getDateParams = function () {
+  const date = new Date()
+  return {
+    params: {
+      month: date.getMonth(),
+      year: date.getFullYear(),
+    },
+  }
 }
 
 export const mutations = {
-  update(state, { projectIndex, ratingIndex, ratingValue }) {
+  update (state, { projectIndex, ratingIndex, ratingValue }) {
     const newItems = [...state.items]
     const project = newItems[projectIndex]
     const newData = project.ratings.slice(0)
@@ -28,7 +30,7 @@ export const mutations = {
 
     state.items = newItems
   },
-  setProjects(state, projects) {
+  setProjects (state, projects) {
     state.projects = projects.map(p => ({
       id: p.id,
       code: p.code,
@@ -36,19 +38,13 @@ export const mutations = {
       isActive: p.is_active === 1,
     })).sort(sortByProperty.bind(this, 'code'))
   },
-  setProjectRatings(state, items) {
-    state.items = items.map(i => ({
-      standupDate: i.date,
-      standupId: i.standupProjectRating[0].standup_id,
-      ratings: getRatings(i),
-    })).sort(sortByProperty.bind(this, 'date'))
-  },
-  updateProjectRating(state, project) {
+  setProjectRatings (state, standupRatings) {
+    state.standupRatings = standupRatings.sort(sortByProperty.bind(this, 'date'))
   },
 }
 
 export const actions = {
-  async getProjects({ commit }) {
+  async getProjects ({ commit }) {
     const date = new Date()
     const res = await axios.get('/api/projects',
       {
@@ -59,5 +55,14 @@ export const actions = {
       })
 
     commit('setProjects', res.data)
+  },
+  async createStandup ({ commit }) {
+    await axios.post('/api/standups')
+    const res = await axios.get(
+      '/api/projectRatings',
+      getDateParams(),
+    )
+
+    commit('setProjectRatings', res.data)
   },
 }

@@ -21,6 +21,7 @@ Route.put('/api/projects/:id', 'ApiController.editProject').validator('StoreProj
 Route.delete('/api/projects/:id', 'ApiController.deleteProject')
 Route.get('/api/projectRatings', 'ApiController.getProjectRatings')
 Route.post('/api/projectRatings', 'ApiController.setProjectRating')
+Route.get('/api/standups', 'ApiController.getStandups')
 Route.post('/api/standups', 'ApiController.addStandup')
 Route.delete('/api/standups', 'ApiController.deleteStandup')
 
