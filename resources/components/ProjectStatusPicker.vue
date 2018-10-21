@@ -82,7 +82,7 @@
   import { mapState } from 'vuex'
 
   export default {
-    props: ['projectId', 'standupIndex', 'projectRating', 'title'],
+    props: ['projectId', 'standupId', 'projectRating', 'title'],
     data () {
       return {
         dialog: false,
@@ -126,18 +126,13 @@
         try {
           const ratingValue = this.getRatingId(icon)
           const ratingData = {
-            projectRatingId: this.projectRatingId,
+            projectId: this.projectId,
             ratingValueId: ratingValue,
+            standupId: this.standupId,
           }
 
-          const payload = {
-            projectIndex: this.projectIndex,
-            ratingIndex: this.ratingIndex,
-            ratingValue,
-          }
-
-          this.$store.commit('update', payload)
-          await axios.post('/api/projectRating', ratingData)
+          this.$store.commit('updateRating', ratingData)
+          await axios.post('/api/projectRatings', ratingData)
         } catch (e) {
           // TODO handle error
           console.error(e)

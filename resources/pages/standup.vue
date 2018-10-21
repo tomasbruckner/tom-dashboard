@@ -23,7 +23,7 @@
         <project-status-picker
         :project-rating='i.rating'
         :project-id='i.projectId'
-        :standup-index='i.standupId'
+        :standup-id='i.standupId'
         />
         </td>
       </template>
@@ -91,7 +91,7 @@
             id: standup.id,
             date: standup.date,
           },
-          ratings: this.getRatings(standup.id),
+          ratings: this.getRatings(standup),
         }))
       },
     },
@@ -104,11 +104,11 @@
 
         return format(d, 'DD/MM/YYYY')
       },
-      getRatings(standupId) {
+      getRatings(standup) {
         return this.projects.map(p => ({
-          standupId,
+          standupId: standup.id,
           projectId: p.id,
-          rating: 0,
+          rating: standup.standupProjectRating[p.id] || 0,
         }));
       },
       async createStandup(i) {
