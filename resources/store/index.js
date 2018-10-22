@@ -49,6 +49,14 @@ export const mutations = {
       isActive: p.is_active === 1,
     })).sort(sortByProperty.bind(this, 'code'));
   },
+  setAllProjects(state, projects) {
+    state.allProjects = projects.map(p => ({
+      id: p.id,
+      code: p.code,
+      description: p.description,
+      isActive: p.is_active === 1,
+    })).sort(sortByProperty.bind(this, 'code'));
+  },
   setProjectRatings (state, standupRatings) {
     const newStandupRatings = standupRatings.sort(sortByProperty.bind(this, 'date'));
     for (const [index, { standupProjectRating }] of newStandupRatings.entries()) {
@@ -67,16 +75,19 @@ export const mutations = {
 
 export const actions = {
   async getProjects ({ commit }) {
-    const date = new Date();
     const res = await axios.get('/api/projects',
       {
         params: {
-          month: date.getMonth(),
-          year: date.getFullYear(),
+          isActive: true,
         },
       });
 
     commit('setProjects', res.data);
+  },
+  async getAllProjects ({ commit }) {
+    const res = await axios.get('/api/projects');
+
+    commit('setAllProjects', res.data);
   },
   async createStandup ({ commit }) {
     await axios.post('/api/standups');

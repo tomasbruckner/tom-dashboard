@@ -28,15 +28,15 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="close">Zrušit</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="save">Uložit</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-data-table
       :headers='headers'
-      :items='projects'
+      :items='allProjects'
       item-key="code"
       hide-actions
       fill-height
@@ -68,18 +68,18 @@
 </template>
 
 <script>
-  import axios from '~/plugins/axios'
-  import { mapState } from 'vuex'
-  import ProjectStatusPicker from '../components/ProjectStatusPicker'
-  import format from 'date-fns/format'
+  import axios from '~/plugins/axios';
+  import { mapState } from 'vuex';
+  import ProjectStatusPicker from '../components/ProjectStatusPicker';
+  import format from 'date-fns/format';
 
   export default {
-    async fetch({ store, params }) {
-      await store.dispatch('getProjects')
+    async fetch ({ store, params }) {
+      await store.dispatch('getAllProjects');
     },
     computed: {
       ...mapState([
-        'projects',
+        'allProjects',
       ]),
       headers: function () {
         return [
@@ -107,10 +107,10 @@
             sortable: false,
             value: 'actions',
           },
-        ]
+        ];
       },
     },
-    data() {
+    data () {
       return {
         pagination: { sortBy: 'code' },
         dialog: false,
@@ -130,63 +130,62 @@
           description: '',
           isActive: true,
         },
-      }
+      };
     },
     methods: {
-      editItem(item) {
+      editItem (item) {
         this.modalItem = {
           id: item.id,
           code: item.code,
           description: item.description,
           isActive: item.isActive,
-        }
-        this.dialog = true
+        };
+        this.dialog = true;
       },
-      deleteItem(item) {
-        const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`)
+      async deleteItem (item) {
+        const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
 
         if (confirmed) {
-          axios.delete(`/api/projects/${item.id}`)
-            .then(async res => {
-              await this.$store.dispatch('getProjects')
-            })
+          await axios.delete(`/api/projects/${item.id}`);
+          await this.$store.dispatch('getAllProjects');
         }
       },
-      close() {
-        this.dialog = false
-        this.modalItem = Object.assign(this.defaultModalItem)
+      close () {
+        this.dialog = false;
+        this.modalItem = Object.assign(this.defaultModalItem);
       },
-      async save() {
+      async save () {
         if (this.modalItem.id) {
           await axios.put(`/api/projects/${this.modalItem.id}`,
             {
               ...this.modalItem,
-            })
+            });
         } else {
           await axios.post('/api/projects',
             {
               ...this.modalItem,
-            })
+            });
         }
 
-        await this.$store.dispatch('getProjects')
-        this.modalItem = Object.assign(this.defaultModalItem)
-        this.dialog = false
+        this.$store.dispatch('getProjects');
+        await this.$store.dispatch('getAllProjects');
+        this.modalItem = Object.assign(this.defaultModalItem);
+        this.dialog = false;
       },
-      formatDate(date) {
+      formatDate (date) {
         if (!date) {
-          return ''
+          return '';
         }
 
-        const d = new Date(date)
+        const d = new Date(date);
 
-        return format(d, 'DD/MM/YYYY')
+        return format(d, 'DD/MM/YYYY');
       },
     },
     components: {
       ProjectStatusPicker,
     },
-  }
+  };
 </script>
 
 <style>

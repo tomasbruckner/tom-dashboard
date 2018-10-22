@@ -1,41 +1,46 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
+  <div>
+    <v-layout row reverse>
+      <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
+    </v-layout>
 
-    <v-data-table
-      :headers='headers'
-      :items='rows'
-      hide-actions
-      fill-height
-      class='elevation-1 fullscreen'
-    >
-      <template slot="headers" slot-scope="props">
-        <tr>
-          <th v-for="h in props.headers">
-            <div class="text-xs-center header">{{ h.text }}</div>
-          </th>
-        </tr>
-      </template>
-      <template slot='items' slot-scope='{ item }'>
-        <td class='text-xs-center element'>{{ formatDate(item.standup.date) }}</td>
+    <v-layout column justify-center align-center>
 
-        <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
-        <project-status-picker
-        :project-rating='i.rating'
-        :project-id='i.projectId'
-        :standup-id='i.standupId'
-        />
-        </td>
-      </template>
-    </v-data-table>
-  </v-layout>
+      <v-data-table
+        :headers='headers'
+        :items='rows'
+        hide-actions
+        fill-height
+        class='elevation-1 fullscreen'
+      >
+        <template slot="headers" slot-scope="props">
+          <tr>
+            <th v-for="h in props.headers">
+              <div class="text-xs-center header">{{ h.text }}</div>
+            </th>
+          </tr>
+        </template>
+        <template slot='items' slot-scope='{ item }'>
+          <td class='text-xs-center element'>{{ formatDate(item.standup.date) }}</td>
+
+          <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
+          <project-status-picker
+          :project-rating='i.rating'
+          :project-id='i.projectId'
+          :standup-id='i.standupId'
+          />
+          </td>
+        </template>
+      </v-data-table>
+    </v-layout>
+  </div>
 </template>
 
 <script>
-  import axios from '~/plugins/axios'
-  import ProjectStatusPicker from '../components/ProjectStatusPicker'
-  import format from 'date-fns/format'
-  import { mapState } from 'vuex'
+  import axios from '~/plugins/axios';
+  import ProjectStatusPicker from '../components/ProjectStatusPicker';
+  import format from 'date-fns/format';
+  import { mapState } from 'vuex';
 
   export default {
     fetch ({ store, params }) {
@@ -47,7 +52,7 @@
       }
 
       promises.push(axios.get('/api/projects',
-        { params: dateParams },
+        { params: { isActive: true } },
         ).then(res => {
           store.commit('setProjects', res.data)
         }),
