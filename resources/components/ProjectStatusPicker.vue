@@ -17,7 +17,7 @@
           primary-title
         >
           <div class="flex-container">
-            {{ title }}
+            {{ title || `Select rating - ${projectName}` }}
             <v-icon
               @click="dialog = false"
               x-large
@@ -82,8 +82,8 @@
   import { mapState } from 'vuex'
 
   export default {
-    props: ['projectIndex', 'ratingIndex', 'projectRatingId', 'title'],
-    data() {
+    props: ['projectId', 'standupId', 'projectRating', 'title'],
+    data () {
       return {
         dialog: false,
         className: 'material-icons',
@@ -91,19 +91,19 @@
     },
     computed: {
       ...mapState([
-        'items',
+        'projects',
       ]),
       icon: function () {
-        return this.getRatingIconFromId(this.iconId)
+        return this.getRatingIconFromId(this.projectRating)
       },
-      iconId: function () {
-        return this.items[this.projectIndex].ratings[this.ratingIndex].ratingValue
+      projectName: function () {
+        return this.projects.find(p => p.id === this.projectId).code
       },
     },
     methods: {
       getClassName: function () {
         let className = 'material-icons custom-font-size'
-        switch (this.iconId) {
+        switch (this.projectRating) {
           case 0:
             return className
           case 1:
@@ -126,18 +126,13 @@
         try {
           const ratingValue = this.getRatingId(icon)
           const ratingData = {
-            projectRatingId: this.projectRatingId,
+            projectId: this.projectId,
             ratingValueId: ratingValue,
+            standupId: this.standupId,
           }
 
-          const payload = {
-            projectIndex: this.projectIndex,
-            ratingIndex: this.ratingIndex,
-            ratingValue,
-          }
-
-          this.$store.commit('update', payload)
-          await axios.post('/api/projectRating', ratingData)
+          this.$store.commit('updateRating', ratingData)
+          await axios.post('/api/projectRatings', ratingData)
         } catch (e) {
           // TODO handle error
           console.error(e)

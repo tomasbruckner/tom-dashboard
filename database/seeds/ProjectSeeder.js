@@ -22,42 +22,39 @@ class ProjectSeeder {
     return [
       {
         code: 'ETS',
+        is_active: true,
       },
       {
         code: 'EMB',
+        is_active: true,
       },
       {
         code: 'GEB',
-      },
-      {
-        code: 'TFP',
+        is_active: true,
       },
       {
         code: 'SEAL',
+        is_active: true,
       },
       {
         code: 'CDC',
+        is_active: true,
       },
       {
         code: 'BGT',
+        is_active: true,
       },
       {
         code: 'FUND',
+        is_active: true,
       },
       {
         code: 'ORCH',
-      },
-      {
-        code: 'MYP',
+        is_active: true,
       },
       {
         code: 'STR',
-      },
-      {
-        code: 'RED',
-      },
-      {
-        code: 'AB',
+        is_active: true,
       },
     ]
   }

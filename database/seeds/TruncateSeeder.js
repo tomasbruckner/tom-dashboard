@@ -11,7 +11,6 @@
 */
 
 const ProjectExpModifierModel = use('App/Models/ProjectExpModifier')
-const ProjectMonthInstanceModel = use('App/Models/ProjectMonthInstance')
 const ProjectModel = use('App/Models/Project')
 const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum')
 const StandupProjectRatingModel = use('App/Models/StandupProjectRating')
@@ -23,7 +22,6 @@ class TruncateSeeder {
     await ProjectExpModifierModel.query().delete()
     await UserModel.query().delete()
     await StandupProjectRatingModel.query().delete()
-    await ProjectMonthInstanceModel.query().delete()
     await ProjectModel.query().delete()
     await StandupModel.query().delete()
     await StandupProjectRatingEnumModel.query().delete()
