@@ -167,7 +167,7 @@
             });
         }
 
-        this.$store.dispatch('getProjects');
+        await this.$store.dispatch('getProjects');
         await this.$store.dispatch('getAllProjects');
         this.modalItem = Object.assign(this.defaultModalItem);
         this.dialog = false;
