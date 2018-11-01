@@ -8,9 +8,9 @@
   "main": "server.js",
   "scripts": {
     "serve:dev": "npm run dev",
-    "dev": "nodemon --inspect L --watch app --watch bootstrap --watch config --watch .env -x node server.js",
+    "dev": "nodemon --inspect --watch app --watch bootstrap --watch config --watch .env -x node server.js",
     "build": "node ./ace nuxtbuild",
-    "start": "nodemon --inspect -L --watch app --watch bootstrap --watch config --watch .env -x node server.js",
+    "start": "nodemon --inspect --watch app --watch bootstrap --watch config --watch .env -x node server.js",
     "precommit": "npm run lint",
     "lint": "standard && eslint --ext .js,.vue resources/"
   },
