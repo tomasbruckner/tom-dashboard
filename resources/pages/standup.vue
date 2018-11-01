@@ -1,7 +1,41 @@
 <template>
   <div>
     <v-layout row reverse>
-      <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
+      <v-btn color="error" right @click="_ => createStandup()">Přidat standup</v-btn>
+
+      <v-dialog v-model="noteDialog.isOpen" persistent max-width="500px">
+        <v-btn slot="activator" color="primary" right>Přidat poznámku</v-btn>
+        <v-card>
+          <v-card-title>
+            <span class="headline">Přidat poznámku</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+
+                <v-flex xs12>
+                  <v-autocomplete
+                    :items="projectNames"
+                    label="Projekt"
+                    multiple
+                    chips
+                  ></v-autocomplete>
+                </v-flex>
+
+                <v-flex xs12>
+                  <v-textarea label="Poznámka" required></v-textarea>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="closeNoteDialog()">Zavřít</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="createNote()">Uložit</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
     </v-layout>
 
     <v-layout column justify-center align-center>
@@ -101,7 +135,18 @@
       },
     },
     data () {
-      return {}
+      return {
+        noteDialog: {
+          isOpen: false,
+          project: '',
+          note: '',
+        },
+        defaultNoteDialog: {
+          isOpen: false,
+          project: '',
+          note: '',
+        },
+      }
     },
     methods: {
       formatDate (date) {
@@ -115,6 +160,12 @@
           projectId: p.id,
           rating: standup.standupProjectRating[p.id] || 0,
         }));
+      },
+      closeNoteDialog() {
+        this.noteDialog = { ...this.defaultNoteDialog }
+      },
+      async createNote() {
+        await this.$store.dispatch('createNote')
       },
       async createStandup(i) {
         await this.$store.dispatch('createStandup')

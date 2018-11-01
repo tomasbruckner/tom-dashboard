@@ -15,14 +15,20 @@
 
 const Route = use('Route')
 
-Route.get('/api/projects', 'ApiController.getProjects')
-Route.post('/api/projects', 'ApiController.addProject').validator('StoreProject')
-Route.put('/api/projects/:id', 'ApiController.editProject').validator('StoreProject')
-Route.delete('/api/projects/:id', 'ApiController.deleteProject')
-Route.get('/api/projectRatings', 'ApiController.getProjectRatings')
-Route.post('/api/projectRatings', 'ApiController.setProjectRating')
-Route.get('/api/standups', 'ApiController.getStandups')
-Route.post('/api/standups', 'ApiController.addStandup')
-Route.delete('/api/standups', 'ApiController.deleteStandup')
+Route.get('/api/projects', 'ProjectController.getProjects')
+Route.post('/api/projects', 'ProjectController.createProject').validator('StoreProject')
+Route.put('/api/projects/:id', 'ProjectController.editProject').validator('StoreProject')
+Route.delete('/api/projects/:id', 'ProjectController.deleteProject')
+
+Route.get('/api/projectRatings', 'ProjectRatingController.getProjectRatings')
+Route.post('/api/projectRatings', 'ProjectRatingController.setProjectRating')
+
+Route.get('/api/standups', 'StandupController.getStandups')
+Route.post('/api/standups', 'StandupController.createStandup')
+Route.delete('/api/standups', 'StandupController.deleteStandup')
+
+Route.get('/api/notes', 'NoteController.getNotes')
+Route.post('/api/notes', 'NoteController.createNote')
+Route.put('/api/notes/:id', 'NoteController.editNote')
 
 Route.any('*', 'NuxtController.render')

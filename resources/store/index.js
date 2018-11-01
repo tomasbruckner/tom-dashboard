@@ -1,6 +1,7 @@
 import axios from '~/plugins/axios';
 
 export const state = () => ({
+  notes: {},
   projects: [],
   standups: [],
   standupRatings: {},
