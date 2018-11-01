@@ -2,6 +2,31 @@
   <div>
     <v-layout row reverse>
       <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
+
+      <v-flex md1 class="pad">
+        <v-dialog
+          ref="dialogMonth"
+          v-model="standupMonth"
+          :return-value.sync="modalItem.standupMonth"
+          persistent
+          lazy
+          full-width
+          width="290px"
+        >
+          <v-text-field
+            slot="activator"
+            v-model="modalItem.standupMonth"
+            label="Měsíc"
+            append-icon="event"
+            readonly
+          ></v-text-field>
+          <v-date-picker v-model="modalItem.standupMonth" scrollable type="month">
+            <v-spacer></v-spacer>
+            <v-btn flat color="primary" @click="monthPickerIsOpen = false">Zrušit</v-btn>
+            <v-btn flat color="primary" @click="updateStandup($refs.dialogMonth)">OK</v-btn>
+          </v-date-picker>
+        </v-dialog>
+      </v-flex>
     </v-layout>
 
     <v-layout column justify-center align-center>
@@ -11,6 +36,7 @@
         :items='rows'
         hide-actions
         fill-height
+        no-data-text="Žádná data"
         class='elevation-1 fullscreen'
       >
         <template slot="headers" slot-scope="props">
@@ -24,11 +50,11 @@
           <td class='text-xs-center element'>{{ formatDate(item.standup.date) }}</td>
 
           <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
-          <project-status-picker
-          :project-rating='i.rating'
-          :project-id='i.projectId'
-          :standup-id='i.standupId'
-          />
+            <project-status-picker
+              :project-rating='i.rating'
+              :project-id='i.projectId'
+              :standup-id='i.standupId'
+            />
           </td>
         </template>
       </v-data-table>
@@ -44,28 +70,28 @@
 
   export default {
     fetch ({ store, params }) {
-      const promises = []
-      const date = new Date()
+      const promises = [];
+      const date = new Date();
       const dateParams = {
         month: date.getMonth(),
         year: date.getFullYear(),
-      }
+      };
 
       promises.push(axios.get('/api/projects',
         { params: { isActive: true } },
         ).then(res => {
-          store.commit('setProjects', res.data)
+          store.commit('setProjects', res.data);
         }),
-      )
+      );
 
       promises.push(axios.get('/api/projectRatings',
         { params: dateParams },
         ).then(res => {
-          store.commit('setProjectRatings', res.data)
+          store.commit('setProjectRatings', res.data);
         }),
-      )
+      );
 
-      return Promise.all(promises)
+      return Promise.all(promises);
     },
     computed: {
       ...mapState([
@@ -78,7 +104,7 @@
           align: 'center',
           sortable: false,
           value: project.code,
-        }))
+        }));
 
         return [
           {
@@ -88,7 +114,7 @@
             value: 'Datum',
           },
           ...projects,
-        ]
+        ];
       },
       rows: function () {
         return this.standupRatings.map(standup => ({
@@ -97,33 +123,62 @@
             date: standup.date,
           },
           ratings: this.getRatings(standup),
-        }))
+        }));
       },
     },
     data () {
-      return {}
+      return {
+        standupMonth: '',
+        modalItem: {
+          standupMonth: null,
+        },
+        monthPickerIsOpen: false,
+      };
     },
     methods: {
       formatDate (date) {
-        const d = new Date(date)
+        const d = new Date(date);
 
-        return format(d, 'DD/MM/YYYY')
+        return format(d, 'DD/MM/YYYY');
       },
-      getRatings(standup) {
+      formatMonth (date) {
+        const d = new Date(date);
+
+        return format(d, 'MM-YYYY');
+      },
+      updateStandup (monthInput) {
+        monthInput.save(this.modalItem.standupMonth);
+
+        const actualDate = new Date();
+
+        const selectedDate = new Date();
+        const [year, month] = this.modalItem.standupMonth.split('-');
+        selectedDate.setFullYear(Number(year), Number(month) - 1);
+
+        const isSameMonth = (selectedDate.getMonth() === actualDate.getMonth());
+        const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
+
+        if (isSameMonth && isSameYear) {
+          this.$store.dispatch('getStandupData');
+        } else {
+          this.$store.dispatch('getProjectsForMonth', selectedDate);
+        }
+      },
+      getRatings (standup) {
         return this.projects.map(p => ({
           standupId: standup.id,
           projectId: p.id,
           rating: standup.standupProjectRating[p.id] || 0,
         }));
       },
-      async createStandup(i) {
-        await this.$store.dispatch('createStandup')
+      async createStandup (i) {
+        await this.$store.dispatch('createStandup');
       },
     },
     components: {
       ProjectStatusPicker,
     },
-  }
+  };
 </script>
 
 <style>
@@ -134,6 +189,10 @@
 
   .element {
     font-size: 1.5em !important;
+  }
+
+  .pad {
+    padding-right: 2%;
   }
 
   .header {
