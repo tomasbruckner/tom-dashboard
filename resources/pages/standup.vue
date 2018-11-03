@@ -1,42 +1,65 @@
 <template>
   <div>
     <v-layout row reverse>
-      <v-btn color="error" right @click="_ => createStandup()">Přidat standup</v-btn>
+      <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
 
-      <v-dialog v-model="noteDialog.isOpen" persistent max-width="500px">
-        <v-btn slot="activator" color="primary" right>Přidat poznámku</v-btn>
-        <v-card>
-          <v-card-title>
-            <span class="headline">Přidat poznámku</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-
-                <v-flex xs12>
-                  <v-autocomplete
-                    :items="projectNames"
-                    label="Projekt"
-                    multiple
-                    chips
-                  ></v-autocomplete>
-                </v-flex>
-
-                <v-flex xs12>
-                  <v-textarea label="Poznámka" required></v-textarea>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
+      <v-flex md1 class="pad">
+        <v-dialog
+          ref="dialogMonth"
+          v-model="standupMonth"
+          :return-value.sync="modalItem.standupMonth"
+          persistent
+          lazy
+          full-width
+          width="290px"
+        >
+          <v-text-field
+            slot="activator"
+            v-model="modalItem.standupMonth"
+            label="Měsíc"
+            append-icon="event"
+            readonly
+          ></v-text-field>
+          <v-date-picker v-model="modalItem.standupMonth" scrollable type="month">
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="closeNoteDialog()">Zavřít</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="createNote()">Uložit</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
+            <v-btn flat color="primary" @click="monthPickerIsOpen = false">Zrušit</v-btn>
+            <v-btn flat color="primary" @click="updateStandup($refs.dialogMonth)">OK</v-btn>
+          </v-date-picker>
+        </v-dialog>
+      </v-flex>
     </v-layout>
+    <v-dialog v-model="noteDialog.isOpen" persistent max-width="500px">
+      <v-btn slot="activator" color="primary" right>Přidat poznámku</v-btn>
+      <v-card>
+        <v-card-title>
+          <span class="headline">Přidat poznámku</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+
+              <v-flex xs12>
+                <v-autocomplete
+                  :items="projectNames"
+                  label="Projekt"
+                  multiple
+                  chips
+                ></v-autocomplete>
+              </v-flex>
+
+              <v-flex xs12>
+                <v-textarea label="Poznámka" required></v-textarea>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click.native="closeNoteDialog()">Zavřít</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="createNote()">Uložit</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <v-layout column justify-center align-center>
 
@@ -45,6 +68,7 @@
         :items='rows'
         hide-actions
         fill-height
+        no-data-text="Žádná data"
         class='elevation-1 fullscreen'
       >
         <template slot="headers" slot-scope="props">
@@ -58,11 +82,11 @@
           <td class='text-xs-center element'>{{ formatDate(item.standup.date) }}</td>
 
           <td v-for='(i, itemIndex) in item.ratings' :key='itemIndex'>
-          <project-status-picker
-          :project-rating='i.rating'
-          :project-id='i.projectId'
-          :standup-id='i.standupId'
-          />
+            <project-status-picker
+              :project-rating='i.rating'
+              :project-id='i.projectId'
+              :standup-id='i.standupId'
+            />
           </td>
         </template>
       </v-data-table>
@@ -71,123 +95,155 @@
 </template>
 
 <script>
-  import axios from '~/plugins/axios';
-  import ProjectStatusPicker from '../components/ProjectStatusPicker';
-  import format from 'date-fns/format';
-  import { mapState } from 'vuex';
+import axios from '~/plugins/axios';
+import ProjectStatusPicker from '../components/ProjectStatusPicker';
+import format from 'date-fns/format';
+import { mapState } from 'vuex';
 
-  export default {
-    fetch ({ store, params }) {
-      const promises = []
-      const date = new Date()
-      const dateParams = {
-        month: date.getMonth(),
-        year: date.getFullYear(),
-      }
+export default {
+  fetch ({ store, params }) {
+    const promises = [];
+    const date = new Date();
+    const dateParams = {
+      month: date.getMonth(),
+      year: date.getFullYear(),
+    };
 
-      promises.push(axios.get('/api/projects',
-        { params: { isActive: true } },
-        ).then(res => {
-          store.commit('setProjects', res.data)
-        }),
-      )
+    promises.push(axios.get('/api/projects',
+      { params: { isActive: true } },
+      ).then(res => {
+        store.commit('setProjects', res.data);
+      }),
+    );
 
-      promises.push(axios.get('/api/projectRatings',
-        { params: dateParams },
-        ).then(res => {
-          store.commit('setProjectRatings', res.data)
-        }),
-      )
+    promises.push(axios.get('/api/projectRatings',
+      { params: dateParams },
+      ).then(res => {
+        store.commit('setProjectRatings', res.data);
+      }),
+    );
 
-      return Promise.all(promises)
-    },
-    computed: {
-      ...mapState([
-        'projects',
-        'standupRatings',
-      ]),
-      headers: function () {
-        const projects = this.projects.map(project => ({
-          text: project.code,
-          align: 'center',
+    return Promise.all(promises);
+  },
+  computed: {
+    ...mapState([
+      'projects',
+      'standupRatings',
+    ]),
+    headers: function () {
+      const projects = this.projects.map(project => ({
+        text: project.code,
+        align: 'center',
+        sortable: false,
+        value: project.code,
+      }));
+
+      return [
+        {
+          text: 'Datum',
+          align: 'left',
           sortable: false,
-          value: project.code,
-        }))
-
-        return [
-          {
-            text: 'Datum',
-            align: 'left',
-            sortable: false,
-            value: 'Datum',
-          },
-          ...projects,
-        ]
-      },
-      rows: function () {
-        return this.standupRatings.map(standup => ({
-          standup: {
-            id: standup.id,
-            date: standup.date,
-          },
-          ratings: this.getRatings(standup),
-        }))
-      },
+          value: 'Datum',
+        },
+        ...projects,
+      ];
     },
-    data () {
-      return {
-        noteDialog: {
-          isOpen: false,
-          project: '',
-          note: '',
+    rows: function () {
+      return this.standupRatings.map(standup => ({
+        standup: {
+          id: standup.id,
+          date: standup.date,
         },
-        defaultNoteDialog: {
-          isOpen: false,
-          project: '',
-          note: '',
-        },
+        ratings: this.getRatings(standup),
+      }));
+    },
+  },
+  data () {
+    return {
+      standupMonth: '',
+      modalItem: {
+        standupMonth: null,
+      },
+      monthPickerIsOpen: false,
+      noteDialog: {
+        isOpen: false,
+        project: '',
+        note: '',
+      },
+      defaultNoteDialog: {
+        isOpen: false,
+        project: '',
+        note: '',
+      },
+    };
+  },
+  methods: {
+    formatDate (date) {
+      const d = new Date(date);
+
+      return format(d, 'DD/MM/YYYY');
+    },
+    formatMonth (date) {
+      const d = new Date(date);
+
+      return format(d, 'MM-YYYY');
+    },
+    updateStandup (monthInput) {
+      monthInput.save(this.modalItem.standupMonth);
+
+      const actualDate = new Date();
+
+      const selectedDate = new Date();
+      const [year, month] = this.modalItem.standupMonth.split('-');
+      selectedDate.setFullYear(Number(year), Number(month) - 1);
+
+      const isSameMonth = (selectedDate.getMonth() === actualDate.getMonth());
+      const isSameYear = (selectedDate.getFullYear() === actualDate.getFullYear());
+
+      if (isSameMonth && isSameYear) {
+        this.$store.dispatch('getStandupData');
+      } else {
+        this.$store.dispatch('getProjectsForMonth', selectedDate);
       }
     },
-    methods: {
-      formatDate (date) {
-        const d = new Date(date)
-
-        return format(d, 'DD/MM/YYYY')
-      },
-      getRatings(standup) {
-        return this.projects.map(p => ({
-          standupId: standup.id,
-          projectId: p.id,
-          rating: standup.standupProjectRating[p.id] || 0,
-        }));
-      },
-      closeNoteDialog() {
-        this.noteDialog = { ...this.defaultNoteDialog }
-      },
-      async createNote() {
-        await this.$store.dispatch('createNote')
-      },
-      async createStandup(i) {
-        await this.$store.dispatch('createStandup')
-      },
+    getRatings (standup) {
+      return this.projects.map(p => ({
+        standupId: standup.id,
+        projectId: p.id,
+        rating: standup.standupProjectRating[p.id] || 0,
+      }));
     },
-    components: {
-      ProjectStatusPicker,
+    closeNoteDialog () {
+      this.noteDialog = { ...this.defaultNoteDialog };
     },
-  }
+    async createNote () {
+      await this.$store.dispatch('createNote');
+    },
+    async createStandup (i) {
+      await this.$store.dispatch('createStandup');
+    },
+  },
+  components: {
+    ProjectStatusPicker,
+  },
+};
 </script>
 
 <style>
-  .fullscreen {
-    width: 100%;
-    height: 100%;
-  }
+.fullscreen {
+  width: 100%;
+  height: 100%;
+}
 
-  .element {
-    font-size: 1.5em !important;
-  }
+.element {
+  font-size: 1.5em !important;
+}
 
-  .header {
-    font-size: 3em !important;
-  }
+.pad {
+  padding-right: 2%;
+}
+
+.header {
+  font-size: 3em !important;
+}
 </style>

@@ -12,14 +12,32 @@ const sortByProperty = function (property, a, b) {
     : a[property] === b[property] ? 0 : -1;
 };
 
-const getDateParams = function () {
-  const date = new Date();
+const getDateParams = function (date = new Date()) {
   return {
     params: {
       month: date.getMonth(),
       year: date.getFullYear(),
     },
   };
+};
+
+const getProjectParams = () => {
+  return {
+    params: {
+      isActive: true,
+    },
+  };
+};
+
+const filterProjectsByRatings = (projects, ratings) => {
+  const allowedProjectIds = {};
+  for (const { standupProjectRating } of ratings) {
+    for (const { project_id } of standupProjectRating) {
+      allowedProjectIds[project_id] = true;
+    }
+  }
+
+  return projects.filter(p => allowedProjectIds[p.id]);
 };
 
 const getStandupIndex = (state, standupId) => {
@@ -35,7 +53,7 @@ const getStandupIndex = (state, standupId) => {
 export const mutations = {
   updateRating (state, { projectId, ratingValueId, standupId }) {
     const standupIndex = getStandupIndex(state, standupId);
-    const newStandupRatings = [ ...state.standupRatings ];
+    const newStandupRatings = [...state.standupRatings];
     const newRatings = { ...newStandupRatings[standupIndex].standupProjectRating };
     newRatings[projectId] = ratingValueId;
     newStandupRatings[standupIndex].standupProjectRating = newRatings;
@@ -50,7 +68,7 @@ export const mutations = {
       isActive: p.is_active === 1,
     })).sort(sortByProperty.bind(this, 'code'));
   },
-  setAllProjects(state, projects) {
+  setAllProjects (state, projects) {
     state.allProjects = projects.map(p => ({
       id: p.id,
       code: p.code,
@@ -77,11 +95,8 @@ export const mutations = {
 export const actions = {
   async getProjects ({ commit }) {
     const res = await axios.get('/api/projects',
-      {
-        params: {
-          isActive: true,
-        },
-      });
+      getProjectParams(),
+    );
 
     commit('setProjects', res.data);
   },
@@ -98,5 +113,37 @@ export const actions = {
     );
 
     commit('setProjectRatings', res.data);
+  },
+  async getProjectsForMonth ({ commit }, date) {
+    const dateParams = getDateParams(date);
+    const [projectData, ratingsData] = await Promise.all([
+      axios.get(
+        '/api/projects',
+      ),
+      axios.get(
+        '/api/projectRatings',
+        dateParams,
+      ),
+    ]);
+
+    const projects = filterProjectsByRatings(projectData.data, ratingsData.data);
+
+    commit('setProjects', projects);
+    commit('setProjectRatings', ratingsData.data);
+  },
+  async getStandupData ({ commit }) {
+    const [projectData, ratingsData] = await Promise.all([
+      axios.get(
+        '/api/projects',
+        getProjectParams(),
+      ),
+      axios.get(
+        '/api/projectRatings',
+        getDateParams(),
+      ),
+    ]);
+
+    commit('setProjects', projectData.data);
+    commit('setProjectRatings', ratingsData.data);
   },
 };
