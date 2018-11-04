@@ -2,14 +2,14 @@
 
 const Model = use('Model');
 
-class Project extends Model {
+class Note extends Model {
   static get hidden () {
     return ['created_at', 'updated_at'];
   }
 
-  notes () {
-    return this.hasMany('App/Models/Note');
+  project () {
+    return this.belongsTo('App/Models/Project');
   }
 }
 
-module.exports = Project;
+module.exports = Note;

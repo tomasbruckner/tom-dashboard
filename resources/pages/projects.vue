@@ -1,7 +1,7 @@
 <template>
   <v-layout column justify-center align-end>
+    <v-btn @click="createNewProject()" color="primary" dark class="mb-2">Nový projekt</v-btn>
     <v-dialog v-model="dialog" max-width="500px">
-      <v-btn slot="activator" color="primary" dark class="mb-2">Nový projekt</v-btn>
       <v-card>
         <v-card-title>
           <span class="headline">{{ modalTitle }}</span>
@@ -114,7 +114,7 @@
       return {
         pagination: { sortBy: 'code' },
         dialog: false,
-        modalTitle: 'Nový projekt',
+        modalTitle: '',
         rules: {
           required: value => !!value || 'Povinné.',
         },
@@ -133,6 +133,10 @@
       };
     },
     methods: {
+      createNewProject() {
+        this.modalTitle = 'Nový projekt';
+        this.dialog = true;
+      },
       editItem (item) {
         this.modalItem = {
           id: item.id,
@@ -140,6 +144,8 @@
           description: item.description,
           isActive: item.isActive,
         };
+
+        this.modalTitle = 'Upravit projekt';
         this.dialog = true;
       },
       async deleteItem (item) {
@@ -152,7 +158,7 @@
       },
       close () {
         this.dialog = false;
-        this.modalItem = Object.assign(this.defaultModalItem);
+        this.modalItem = { ...this.defaultModalItem };
       },
       async save () {
         if (this.modalItem.id) {
@@ -169,7 +175,7 @@
 
         await this.$store.dispatch('getProjects');
         await this.$store.dispatch('getAllProjects');
-        this.modalItem = Object.assign(this.defaultModalItem);
+        this.modalItem = { ...this.defaultModalItem };
         this.dialog = false;
       },
       formatDate (date) {
@@ -181,9 +187,6 @@
 
         return format(d, 'DD/MM/YYYY');
       },
-    },
-    components: {
-      ProjectStatusPicker,
     },
   };
 </script>

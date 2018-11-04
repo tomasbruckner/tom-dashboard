@@ -1,6 +1,7 @@
 import axios from '~/plugins/axios';
 
 export const state = () => ({
+  notes: [],
   projects: [],
   standups: [],
   standupRatings: {},
@@ -89,6 +90,13 @@ export const mutations = {
 
     state.standupRatings = newStandupRatings;
   },
+  setNotes (state, notes) {
+    state.notes = notes.map(n => ({
+      id: n.id,
+      projectCode: n.project.code,
+      text: n.note,
+    })).sort(sortByProperty.bind(this, 'projectCode'));
+  },
 };
 
 export const actions = {
@@ -144,5 +152,26 @@ export const actions = {
 
     commit('setProjects', projectData.data);
     commit('setProjectRatings', ratingsData.data);
+  },
+  async getNotes ({ commit }) {
+    const notes = await axios.get('/api/notes');
+
+    commit('setNotes', notes.data);
+  },
+  async createNote ({ commit }, note) {
+    await axios.post('/api/notes', note);
+    const res = await axios.get('/api/notes');
+
+    commit('setNotes', res.data);
+  },
+  async markNoteCompleted ({ commit }, noteId) {
+    const [_, notes] = await Promise.all(
+      [
+        axios.post(`/api/notes/${noteId}/completed`),
+        axios.get(`/api/notes`),
+      ],
+    );
+
+    commit('setNotes', notes.data);
   },
 };
