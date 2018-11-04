@@ -1,12 +1,45 @@
 <template>
   <div>
     <v-layout row reverse>
+
+      <v-dialog v-model="noteDialog.isOpen" persistent max-width="500px">
+        <v-btn slot="activator" color="primary" right>Přidat poznámku</v-btn>
+        <v-card>
+          <v-card-title>
+            <span class="headline">Přidat poznámku</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+
+                <v-flex xs12>
+                  <v-combobox
+                    v-model="noteDialog.selectedProject"
+                    :items="projectNames"
+                    label="Projekt"
+                  ></v-combobox>
+                </v-flex>
+
+                <v-flex xs12>
+                  <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="closeNoteDialog()">Zavřít</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="createNote()">Uložit</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
 
       <v-flex md1 class="pad">
         <v-dialog
           ref="dialogMonth"
-          v-model="standupMonth"
+          v-model="monthPickerIsOpen"
           :return-value.sync="modalItem.standupMonth"
           persistent
           lazy
@@ -27,39 +60,8 @@
           </v-date-picker>
         </v-dialog>
       </v-flex>
+
     </v-layout>
-    <v-dialog v-model="noteDialog.isOpen" persistent max-width="500px">
-      <v-btn slot="activator" color="primary" right>Přidat poznámku</v-btn>
-      <v-card>
-        <v-card-title>
-          <span class="headline">Přidat poznámku</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-
-              <v-flex xs12>
-                <v-autocomplete
-                  :items="projectNames"
-                  label="Projekt"
-                  multiple
-                  chips
-                ></v-autocomplete>
-              </v-flex>
-
-              <v-flex xs12>
-                <v-textarea label="Poznámka" required></v-textarea>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="closeNoteDialog()">Zavřít</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="createNote()">Uložit</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-layout column justify-center align-center>
 
@@ -91,11 +93,13 @@
         </template>
       </v-data-table>
     </v-layout>
+    <note-list></note-list>
   </div>
 </template>
 
 <script>
 import axios from '~/plugins/axios';
+import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import format from 'date-fns/format';
 import { mapState } from 'vuex';
@@ -123,14 +127,21 @@ export default {
       }),
     );
 
+    promises.push(axios.get('/api/notes')
+      .then(res => {
+        store.commit('setNotes', res.data);
+      }),
+    );
+
     return Promise.all(promises);
   },
   computed: {
     ...mapState([
+      'notes',
       'projects',
       'standupRatings',
     ]),
-    headers: function () {
+    headers () {
       const projects = this.projects.map(project => ({
         text: project.code,
         align: 'center',
@@ -148,13 +159,19 @@ export default {
         ...projects,
       ];
     },
-    rows: function () {
+    rows () {
       return this.standupRatings.map(standup => ({
         standup: {
           id: standup.id,
           date: standup.date,
         },
         ratings: this.getRatings(standup),
+      }));
+    },
+    projectNames () {
+      return this.projects.map(p => ({
+        text: p.code,
+        value: p.id,
       }));
     },
   },
@@ -167,7 +184,7 @@ export default {
       monthPickerIsOpen: false,
       noteDialog: {
         isOpen: false,
-        project: '',
+        selectedProject: null,
         note: '',
       },
       defaultNoteDialog: {
@@ -189,6 +206,11 @@ export default {
       return format(d, 'MM-YYYY');
     },
     updateStandup (monthInput) {
+      if (!this.modalItem.standupMonth) {
+        this.monthPickerIsOpen = false;
+        return;
+      }
+
       monthInput.save(this.modalItem.standupMonth);
 
       const actualDate = new Date();
@@ -205,6 +227,8 @@ export default {
       } else {
         this.$store.dispatch('getProjectsForMonth', selectedDate);
       }
+
+      this.monthPickerIsOpen = false;
     },
     getRatings (standup) {
       return this.projects.map(p => ({
@@ -217,7 +241,17 @@ export default {
       this.noteDialog = { ...this.defaultNoteDialog };
     },
     async createNote () {
-      await this.$store.dispatch('createNote');
+      if (!this.noteDialog.selectedProject || !this.noteDialog.note) {
+        return;
+      }
+
+      const newNote = {
+        projectId: this.noteDialog.selectedProject.value,
+        note: this.noteDialog.note,
+      };
+
+      this.noteDialog = { ...this.defaultNoteDialog };
+      await this.$store.dispatch('createNote', newNote);
     },
     async createStandup (i) {
       await this.$store.dispatch('createStandup');
@@ -225,6 +259,7 @@ export default {
   },
   components: {
     ProjectStatusPicker,
+    NoteList,
   },
 };
 </script>

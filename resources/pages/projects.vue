@@ -1,7 +1,7 @@
 <template>
   <v-layout column justify-center align-end>
+    <v-btn @click="createNewProject()" color="primary" dark class="mb-2">Nový projekt</v-btn>
     <v-dialog v-model="dialog" max-width="500px">
-      <v-btn @click="createNewProject()" color="primary" dark class="mb-2">Nový projekt</v-btn>
       <v-card>
         <v-card-title>
           <span class="headline">{{ modalTitle }}</span>

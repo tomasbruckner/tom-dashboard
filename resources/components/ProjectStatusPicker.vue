@@ -17,7 +17,7 @@
           primary-title
         >
           <div class="flex-container">
-            {{ title || `Select rating - ${projectName}` }}
+            {{ title || `Vyberte hodnocení - ${projectName}` }}
             <v-icon
               @click="dialog = false"
               x-large

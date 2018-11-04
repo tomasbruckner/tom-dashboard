@@ -57,7 +57,7 @@
         drawer: false,
         fixed: false,
         items: [
-          { icon: 'apps', title: 'Welcome', to: '/' },
+          { icon: 'apps', title: 'Dashboard', to: '/' },
           { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
           { icon: 'laptop_windows', title: 'Projekty', to: '/projects' },
         ],
