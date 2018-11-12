@@ -45,11 +45,11 @@ class NoteController {
 
   async editNote ({ request, response, params }) {
     const { id } = params;
-    const project = await NoteModel.find(id);
-    project.merge(NoteController.mapToDbEntity(request));
-    await project.save();
+    const note = await NoteModel.find(id);
+    note.merge(NoteController.mapToDbEntity(request));
+    await note.save();
 
-    return project.toJSON();
+    return note.toJSON();
   }
 }
 

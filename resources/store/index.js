@@ -5,6 +5,7 @@ export const state = () => ({
   projects: [],
   standups: [],
   standupRatings: {},
+  users: [],
 });
 
 const sortByProperty = function (property, a, b) {
@@ -97,6 +98,15 @@ export const mutations = {
       text: n.note,
     })).sort(sortByProperty.bind(this, 'projectCode'));
   },
+  setUsers (state, users) {
+    state.users = users.map(u => ({
+      firstName: u.first_name,
+      id: u.id,
+      isActive: u.is_active,
+      lastName: u.last_name,
+      totalExp: u.total_exp,
+    }));
+  },
 };
 
 export const actions = {
@@ -173,5 +183,10 @@ export const actions = {
     );
 
     commit('setNotes', notes.data);
+  },
+  async getUsers ({ commit }) {
+    const users = await axios.get('/api/users');
+
+    commit('setUsers', users.data);
   },
 };
