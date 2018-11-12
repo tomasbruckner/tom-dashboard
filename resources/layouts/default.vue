@@ -60,6 +60,7 @@
           { icon: 'apps', title: 'Dashboard', to: '/' },
           { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
           { icon: 'laptop_windows', title: 'Projekty', to: '/projects' },
+          { icon: 'face', title: 'Uživatelé', to: '/users' },
         ],
         miniVariant: false,
         right: true,

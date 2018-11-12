@@ -185,8 +185,8 @@ export const actions = {
     commit('setNotes', notes.data);
   },
   async getUsers ({ commit }) {
-    const users = axios.get('/api/users');
+    const users = await axios.get('/api/users');
 
-    commit('setUsers', users);
+    commit('setUsers', users.data);
   },
 };

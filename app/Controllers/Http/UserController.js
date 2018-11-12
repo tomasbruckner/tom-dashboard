@@ -5,17 +5,17 @@ const UserModel = use('App/Models/User');
 class UserController {
   static mapToDbEntity (request) {
     const {
-      first_name,
-      last_name,
-      is_active,
-      total_exp,
-    } = request.only(['first_name', 'last_name', 'is_active', 'total_exp']);
+      firstName,
+      lastName,
+      isActive,
+      totalExp,
+    } = request.only(['firstName', 'lastName', 'isActive', 'totalExp']);
 
     return {
-      first_name,
-      last_name,
-      is_active,
-      total_exp,
+      first_name: firstName,
+      last_name: lastName,
+      is_active: isActive,
+      total_exp: totalExp,
     };
   }
 
@@ -47,11 +47,13 @@ class UserController {
   async deleteUser ({ request, response, params }) {
     const { id } = params;
     const user = await UserModel.find(id);
-    user.is_active = 0;
 
-    await user.save();
-
-    return user.toJSON();
+    try {
+      await user.delete();
+      response.send();
+    } catch (e) {
+      return e.toJSON();
+    }
   }
 }
 

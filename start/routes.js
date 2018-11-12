@@ -33,8 +33,8 @@ Route.put('/api/notes/:id', 'NoteController.editNote');
 Route.post('/api/notes/:id/completed', 'NoteController.markCompleted');
 
 Route.get('/api/users', 'UserController.getUsers');
-Route.post('/api/users', 'UserController.createUser');
-Route.put('/api/users/:id', 'UserController.editUser');
+Route.post('/api/users', 'UserController.createUser').validator('StoreUser');
+Route.put('/api/users/:id', 'UserController.editUser').validator('StoreUser');
 Route.delete('/api/users/:id', 'UserController.deleteUser');
 
 Route.any('*', 'NuxtController.render');

@@ -1,43 +1,49 @@
 <template>
   <v-layout column justify-center align-end>
-    <v-btn @click="createNewProject()" color="primary" dark class="mb-2">Nový projekt</v-btn>
+    <v-btn @click="createNewUser()" color="primary" dark class="mb-2">Nový uživatel</v-btn>
     <v-dialog v-model="dialog" max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">{{ modalTitle }}</span>
         </v-card-title>
 
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap column>
-              <v-flex xs12 sm6 md4>
-                <v-text-field :rules="[rules.required]" v-model="modalItem.code" label="Projekt"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="modalItem.description" label="Popis"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-checkbox
-                  label="Aktivní"
-                  v-model="modalItem.isActive"
-                ></v-checkbox>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
+        <v-form ref="form">
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap column>
+                <v-flex xs12 sm6 md4>
+                  <v-text-field :rules="[rules.required]" v-model="modalItem.firstName" label="Jméno"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
+                  <v-text-field :rules="[rules.required]" v-model="modalItem.lastName" label="Příjmení"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
+                  <v-text-field :rules="[rules.required]" type="number" v-model="modalItem.totalExp"
+                                label="Expy"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
+                  <v-checkbox
+                    label="Aktivní"
+                    v-model="modalItem.isActive"
+                  ></v-checkbox>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="close">Zrušit</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="save">Uložit</v-btn>
-        </v-card-actions>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click.native="close">Zrušit</v-btn>
+            <v-btn color="blue darken-1" flat @click.native="save">Uložit</v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
 
     <v-data-table
       :headers='headers'
-      :items='allProjects'
-      item-key="code"
+      :items='users'
+      item-key="id"
       hide-actions
       fill-height
       class='elevation-1 fullscreen'
@@ -71,8 +77,6 @@
 <script>
 import axios from '~/plugins/axios';
 import { mapState } from 'vuex';
-import ProjectStatusPicker from '../components/ProjectStatusPicker';
-import format from 'date-fns/format';
 
 export default {
   async fetch ({ store, params }) {
@@ -108,6 +112,12 @@ export default {
           sortable: true,
           value: 'isActive',
         },
+        {
+          text: 'Akce',
+          align: 'center',
+          sortable: false,
+          value: 'actions',
+        },
       ];
     },
   },
@@ -135,16 +145,18 @@ export default {
     };
   },
   methods: {
-    createNewUser() {
+    createNewUser () {
+      this.modalItem = { ...this.defaultModalItem };
       this.modalTitle = 'Nový uživatel';
       this.dialog = true;
     },
     editItem (item) {
       this.modalItem = {
+        id: item.id,
         firstName: item.firstName,
         lastName: item.lastName,
         totalExp: item.totalExp,
-        isActive: item.isActive,
+        isActive: item.isActive === 1,
       };
 
       this.modalTitle = 'Upravit uživatele';
@@ -176,7 +188,6 @@ export default {
       }
 
       await this.$store.dispatch('getUsers');
-      this.modalItem = { ...this.defaultModalItem };
       this.dialog = false;
     },
   },
