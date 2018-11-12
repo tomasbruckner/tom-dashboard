@@ -12,7 +12,7 @@ class User extends Model {
     return this.hasMany('App/Models/BonusExp')
   }
 
-  projects () {
+  projectParticipations () {
     return this.hasMany('App/Models/UserProjectParticipation')
   }
 }
