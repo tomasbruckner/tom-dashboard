@@ -34,11 +34,8 @@ class UserController {
   async createUser ({ request, response, params }) {
     const user = new UserModel();
     user.fill(UserController.mapToDbEntity(request));
-    try {
-      await user.save();
-    } catch (e) {
-      console.error(e);
-    }
+    await user.save();
+
     return user.toJSON();
   }
 
