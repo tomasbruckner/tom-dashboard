@@ -17,6 +17,8 @@ const Route = use('Route');
 
 Route.post('/api/auth/login', 'AuthController.login')
   .validator('LoginValidator');
+Route.post('/api/auth/logout', 'AuthController.logout');
+Route.get('/api/auth/me', 'AuthController.me');
 
 Route
   .get('/api/notes', 'NoteController.getNotes');

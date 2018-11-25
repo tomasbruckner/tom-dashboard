@@ -8,9 +8,7 @@ class AuthController {
     try {
       const { token } = await auth.attempt(username, password);
       const user = await UserModel
-        .query()
-        .where('username', username)
-        .fetch();
+        .findByOrFail('username', username);
 
       return {
         token,
@@ -18,7 +16,19 @@ class AuthController {
 
       };
     } catch (e) {
-      response.send();
+      response.status(401).send({ message: 'Invalid credentials' });
+    }
+  }
+
+  async logout ({ request, response, auth }) {
+    return { message: 'logout' };
+  }
+
+  async me ({ request, response, auth }) {
+    try {
+      return await auth.getUser();
+    } catch (e) {
+      response.status(401).send({ message: 'Invalid credentials' });
     }
   }
 }

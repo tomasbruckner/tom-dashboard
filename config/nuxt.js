@@ -7,11 +7,11 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'TechFides exp tracker',
+    title: 'Tom Dashboard',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'TechFides experience calculator and project tracker' },
+      { hid: 'description', name: 'description', content: 'Tom Dashboard' },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -22,6 +22,22 @@ module.exports = {
   css: [
     '~/assets/style/app.styl',
   ],
+  modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/auth',
+  ],
+  auth: {
+    redirect: false,
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/api/auth/login', method: 'post', propertyName: 'token' },
+          logout: { url: '/api/auth/logout', method: 'post' },
+          user: { url: '/api/auth/me', method: 'get', propertyName: 'username' },
+        },
+      },
+    },
+  },
   /*
   ** Customize the progress bar color
   */

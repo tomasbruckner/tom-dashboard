@@ -57,8 +57,8 @@
       class='elevation-1 fullscreen'
     >
       <template slot='items' slot-scope='props'>
-        <td class='text-xs-center element'>{{ props.item.username }}</td>
         <td class='text-xs-center element'>{{ `${props.item.firstName} ${props.item.lastName}` }}</td>
+        <td class='text-xs-center element'>{{ props.item.username }}</td>
         <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
         <td class='text-xs-center element'>{{ calculateLevel(props.item.totalExp) }}</td>
         <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
