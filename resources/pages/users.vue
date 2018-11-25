@@ -12,6 +12,14 @@
             <v-container grid-list-md>
               <v-layout wrap column>
                 <v-flex xs12 sm6 md4>
+                  <v-text-field :rules="[rules.required]" v-model="modalItem.username"
+                                label="Přihlašovací jméno"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
+                  <v-text-field :rules="[rules.required]" type="password" v-model="modalItem.password"
+                                label="Heslo"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm6 md4>
                   <v-text-field :rules="[rules.required]" v-model="modalItem.firstName" label="Jméno"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
@@ -49,9 +57,10 @@
       class='elevation-1 fullscreen'
     >
       <template slot='items' slot-scope='props'>
+        <td class='text-xs-center element'>{{ props.item.username }}</td>
         <td class='text-xs-center element'>{{ `${props.item.firstName} ${props.item.lastName}` }}</td>
         <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
-        <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
+        <td class='text-xs-center element'>{{ calculateLevel(props.item.totalExp) }}</td>
         <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
         <td class="justify-center layout px-0">
           <v-icon
@@ -95,6 +104,12 @@ export default {
           value: 'name',
         },
         {
+          text: 'Přihlašovací jméno',
+          align: 'center',
+          sortable: true,
+          value: 'name',
+        },
+        {
           text: 'Expy',
           align: 'center',
           sortable: true,
@@ -132,15 +147,19 @@ export default {
         id: null,
         firstName: '',
         lastName: '',
+        password: '',
         totalExp: 0,
         isActive: true,
+        username: '',
       },
       defaultModalItem: {
         id: null,
         firstName: '',
         lastName: '',
+        password: '',
         totalExp: 0,
         isActive: true,
+        username: '',
       },
     };
   },
@@ -157,6 +176,7 @@ export default {
         lastName: item.lastName,
         totalExp: item.totalExp,
         isActive: item.isActive === 1,
+        username: item.username,
       };
 
       this.modalTitle = 'Upravit uživatele';
@@ -189,6 +209,12 @@ export default {
 
       await this.$store.dispatch('getUsers');
       this.dialog = false;
+    },
+    calculateLevel (totalExp) {
+      const d = -500 + Math.sqrt(500 * 500 + 4 * 5 * totalExp);
+      const result = d / (2 * 5);
+
+      return Math.floor(result);
     },
   },
 };

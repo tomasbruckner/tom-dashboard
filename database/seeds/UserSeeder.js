@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /*
 |--------------------------------------------------------------------------
@@ -10,15 +10,15 @@
 |
 */
 
-const Database = use('Database')
+const Database = use('Database');
 
 class UserSeeder {
   async run () {
     await Database.table('users').insert({
       name: 'Tomáš Bruckner',
       alias: 'Tom',
-    })
+    });
   }
 }
 
-module.exports = UserSeeder
+module.exports = UserSeeder;

@@ -15,26 +15,63 @@
 
 const Route = use('Route');
 
-Route.get('/api/projects', 'ProjectController.getProjects');
-Route.post('/api/projects', 'ProjectController.createProject').validator('StoreProject');
-Route.put('/api/projects/:id', 'ProjectController.editProject').validator('StoreProject');
-Route.delete('/api/projects/:id', 'ProjectController.deleteProject');
+Route.post('/api/auth/login', 'AuthController.login')
+  .validator('LoginValidator');
 
-Route.get('/api/projectRatings', 'ProjectRatingController.getProjectRatings');
-Route.post('/api/projectRatings', 'ProjectRatingController.setProjectRating');
+Route
+  .get('/api/notes', 'NoteController.getNotes');
+Route
+  .post('/api/notes', 'NoteController.createNote');
+Route
+  .put('/api/notes/:id', 'NoteController.editNote');
+Route
+  .post('/api/notes/:id/completed', 'NoteController.markCompleted');
 
-Route.get('/api/standups', 'StandupController.getStandups');
-Route.post('/api/standups', 'StandupController.createStandup');
-Route.delete('/api/standups', 'StandupController.deleteStandup');
+Route
+  .get('/api/projects', 'ProjectController.getProjects');
+Route
+  .post('/api/projects', 'ProjectController.createProject')
+  .validator('StoreProjectValidator');
+Route
+  .put('/api/projects/:id', 'ProjectController.editProject')
+  .validator('StoreProjectValidator');
+Route
+  .delete('/api/projects/:id', 'ProjectController.deleteProject');
+Route
+  .get('/api/projects', 'ProjectController.getProjects');
+Route
+  .post('/api/projects', 'ProjectController.createProject')
+  .validator('StoreProjectValidator');
+Route
+  .put('/api/projects/:id', 'ProjectController.editProject')
+  .validator('StoreProjectValidator');
+Route
+  .delete('/api/projects/:id', 'ProjectController.deleteProject');
 
-Route.get('/api/notes', 'NoteController.getNotes');
-Route.post('/api/notes', 'NoteController.createNote');
-Route.put('/api/notes/:id', 'NoteController.editNote');
-Route.post('/api/notes/:id/completed', 'NoteController.markCompleted');
+Route
+  .get('/api/projectRatings', 'ProjectRatingController.getProjectRatings');
+Route
+  .post('/api/projectRatings', 'ProjectRatingController.setProjectRating');
 
-Route.get('/api/users', 'UserController.getUsers');
-Route.post('/api/users', 'UserController.createUser').validator('StoreUser');
-Route.put('/api/users/:id', 'UserController.editUser').validator('StoreUser');
-Route.delete('/api/users/:id', 'UserController.deleteUser');
+Route
+  .get('/api/standups', 'StandupController.getStandups');
+Route
+  .post('/api/standups', 'StandupController.createStandup');
+Route
+  .delete('/api/standups', 'StandupController.deleteStandup');
 
-Route.any('*', 'NuxtController.render');
+Route
+  .get('/api/users', 'UserController.getUsers');
+Route
+  .post('/api/users', 'UserController.createUser')
+  .validator('StoreUserValidator');
+
+Route
+  .put('/api/users/:id', 'UserController.editUser')
+  .validator('StoreUserValidator');
+
+Route
+  .delete('/api/users/:id', 'UserController.deleteUser');
+
+Route
+  .any('*', 'NuxtController.render');

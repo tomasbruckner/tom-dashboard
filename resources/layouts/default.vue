@@ -50,23 +50,23 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        clipped: true,
-        drawer: false,
-        fixed: false,
-        items: [
-          { icon: 'apps', title: 'Dashboard', to: '/' },
-          { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
-          { icon: 'laptop_windows', title: 'Projekty', to: '/projects' },
-          { icon: 'face', title: 'Uživatelé', to: '/users' },
-        ],
-        miniVariant: false,
-        right: true,
-        rightDrawer: false,
-        title: 'From zero to hero!',
-      }
-    },
-  }
+export default {
+  data () {
+    return {
+      clipped: true,
+      drawer: false,
+      fixed: false,
+      items: [
+        { icon: 'apps', title: 'Dashboard', to: '/' },
+        { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
+        { icon: 'laptop_windows', title: 'Projekty', to: '/projects' },
+        { icon: 'face', title: 'Uživatelé', to: '/users' },
+      ],
+      miniVariant: false,
+      right: true,
+      rightDrawer: false,
+      title: 'From zero to hero!',
+    };
+  },
+};
 </script>

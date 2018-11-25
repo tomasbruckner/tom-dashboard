@@ -1,6 +1,6 @@
 'use strict';
 
-class StoreProject {
+class StoreUserValidator {
   get rules () {
     const projectId = this.ctx.params.id;
 
@@ -13,4 +13,4 @@ class StoreProject {
   }
 }
 
-module.exports = StoreProject;
+module.exports = StoreUserValidator;

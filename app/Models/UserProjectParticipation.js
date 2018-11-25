@@ -1,23 +1,23 @@
-'use strict'
+'use strict';
 
-const Model = use('Model')
+const Model = use('Model');
 
 class UserProjectParticipation extends Model {
   static get hidden () {
-    return ['created_at', 'updated_at']
+    return ['created_at', 'updated_at'];
   }
 
   user () {
-    return this.belongsTo('App/Models/User')
+    return this.belongsTo('App/Models/User');
   }
 
   projectExpModifier () {
-    return this.belongsTo('App/Models/ProjectExpModifier')
+    return this.belongsTo('App/Models/ProjectExpModifier');
   }
 
   project () {
-    return this.belongsTo('App/Models/Project')
+    return this.belongsTo('App/Models/Project');
   }
 }
 
-module.exports = UserProjectParticipation
+module.exports = UserProjectParticipation;

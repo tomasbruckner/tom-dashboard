@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /*
 |--------------------------------------------------------------------------
@@ -10,12 +10,12 @@
 |
 */
 
-const Database = use('Database')
+const Database = use('Database');
 
 class ProjectExpModifierSeeder {
   async run () {
     await Database.table('project_exp_modifiers')
-      .insert(ProjectExpModifierSeeder.getInitialData())
+      .insert(ProjectExpModifierSeeder.getInitialData());
   }
 
   static getInitialData () {
@@ -38,8 +38,8 @@ class ProjectExpModifierSeeder {
         name: 'TEAM_LEADER',
         value: 2.0,
       },
-    ]
+    ];
   }
 }
 
-module.exports = ProjectExpModifierSeeder
+module.exports = ProjectExpModifierSeeder;

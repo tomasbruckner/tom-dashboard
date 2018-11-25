@@ -78,148 +78,148 @@
 </template>
 
 <script>
-  import axios from '~/plugins/axios'
-  import { mapState } from 'vuex'
+import axios from '~/plugins/axios';
+import { mapState } from 'vuex';
 
-  export default {
-    props: ['projectId', 'standupId', 'projectRating', 'title'],
-    data () {
-      return {
-        dialog: false,
-        className: 'material-icons',
+export default {
+  props: ['projectId', 'standupId', 'projectRating', 'title'],
+  data () {
+    return {
+      dialog: false,
+      className: 'material-icons',
+    };
+  },
+  computed: {
+    ...mapState([
+      'projects',
+    ]),
+    icon: function () {
+      return this.getRatingIconFromId(this.projectRating);
+    },
+    projectName: function () {
+      return this.projects.find(p => p.id === this.projectId).code;
+    },
+  },
+  methods: {
+    getClassName: function () {
+      let className = 'material-icons custom-font-size';
+      switch (this.projectRating) {
+        case 0:
+          return className;
+        case 1:
+          return `${className} red800`;
+        case 2:
+          return `${className} red800`;
+        case 3:
+          return `${className} blue500`;
+        case 4:
+          return `${className} green500`;
+        case 5:
+          return `${className} green500`;
+        default:
+          return '';
       }
     },
-    computed: {
-      ...mapState([
-        'projects',
-      ]),
-      icon: function () {
-        return this.getRatingIconFromId(this.projectRating)
-      },
-      projectName: function () {
-        return this.projects.find(p => p.id === this.projectId).code
-      },
-    },
-    methods: {
-      getClassName: function () {
-        let className = 'material-icons custom-font-size'
-        switch (this.projectRating) {
-          case 0:
-            return className
-          case 1:
-            return `${className} red800`
-          case 2:
-            return `${className} red800`
-          case 3:
-            return `${className} blue500`
-          case 4:
-            return `${className} green500`
-          case 5:
-            return `${className} green500`
-          default:
-            return ''
-        }
-      },
-      submit: async function (icon) {
-        this.dialog = false
+    submit: async function (icon) {
+      this.dialog = false;
 
-        try {
-          const ratingValue = this.getRatingId(icon)
-          const ratingData = {
-            projectId: this.projectId,
-            ratingValueId: ratingValue,
-            standupId: this.standupId,
-          }
+      try {
+        const ratingValue = this.getRatingId(icon);
+        const ratingData = {
+          projectId: this.projectId,
+          ratingValueId: ratingValue,
+          standupId: this.standupId,
+        };
 
-          this.$store.commit('updateRating', ratingData)
-          await axios.post('/api/projectRatings', ratingData)
-        } catch (e) {
-          // TODO handle error
-          console.error(e)
-        }
-      },
-      getRatingId: function (icon) {
-        switch (icon) {
-          case 'HIATUS':
-            return 0
-          case 'FAIL':
-            return 1
-          case 'BAD':
-            return 2
-          case 'STANDARD':
-            return 3
-          case 'GOOD':
-            return 4
-          case 'AMAZING':
-            return 5
-        }
-      },
-      getRatingIcon: function (icon) {
-        switch (icon) {
-          case 'HIATUS':
-            return 'remove'
-          case 'FAIL':
-            return 'close'
-          case 'BAD':
-            return 'radio_button_unchecked'
-          case 'STANDARD':
-            return 'radio_button_unchecked'
-          case 'GOOD':
-            return 'radio_button_unchecked'
-          case 'AMAZING':
-            return 'done'
-        }
-      },
-      getRatingIconFromId: function (icon) {
-        switch (icon) {
-          case 0:
-            return 'remove'
-          case 1:
-            return 'close'
-          case 2:
-            return 'radio_button_unchecked'
-          case 3:
-            return 'radio_button_unchecked'
-          case 4:
-            return 'radio_button_unchecked'
-          case 5:
-            return 'done'
-        }
-      },
+        this.$store.commit('updateRating', ratingData);
+        await axios.post('/api/projectRatings', ratingData);
+      } catch (e) {
+        // TODO handle error
+        console.error(e);
+      }
     },
-  }
+    getRatingId: function (icon) {
+      switch (icon) {
+        case 'HIATUS':
+          return 0;
+        case 'FAIL':
+          return 1;
+        case 'BAD':
+          return 2;
+        case 'STANDARD':
+          return 3;
+        case 'GOOD':
+          return 4;
+        case 'AMAZING':
+          return 5;
+      }
+    },
+    getRatingIcon: function (icon) {
+      switch (icon) {
+        case 'HIATUS':
+          return 'remove';
+        case 'FAIL':
+          return 'close';
+        case 'BAD':
+          return 'radio_button_unchecked';
+        case 'STANDARD':
+          return 'radio_button_unchecked';
+        case 'GOOD':
+          return 'radio_button_unchecked';
+        case 'AMAZING':
+          return 'done';
+      }
+    },
+    getRatingIconFromId: function (icon) {
+      switch (icon) {
+        case 0:
+          return 'remove';
+        case 1:
+          return 'close';
+        case 2:
+          return 'radio_button_unchecked';
+        case 3:
+          return 'radio_button_unchecked';
+        case 4:
+          return 'radio_button_unchecked';
+        case 5:
+          return 'done';
+      }
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .myicon {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+.myicon {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
-  .material-icons.custom-picker-font-size {
-    font-size: 1200% !important;
-  }
+.material-icons.custom-picker-font-size {
+  font-size: 1200% !important;
+}
 
-  .material-icons.custom-font-size {
-    font-size: 500% !important;
-  }
+.material-icons.custom-font-size {
+  font-size: 500% !important;
+}
 
-  .material-icons.red800 {
-    color: #c62828;
-  }
+.material-icons.red800 {
+  color: #c62828;
+}
 
-  .material-icons.green500 {
-    color: #4caf50;
-  }
+.material-icons.green500 {
+  color: #4caf50;
+}
 
-  .flex-container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
 
-  .material-icons.blue500 {
-    color: #3f51b5;
-  }
+.material-icons.blue500 {
+  color: #3f51b5;
+}
 </style>
