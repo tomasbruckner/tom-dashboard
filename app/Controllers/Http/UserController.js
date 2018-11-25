@@ -35,7 +35,6 @@ class UserController {
     const user = new UserModel();
     user.fill(UserController.mapToDbEntity(request));
     try {
-      console.log('x');
       await user.save();
     } catch (e) {
       console.error(e);
