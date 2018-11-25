@@ -1,20 +1,25 @@
-'use strict'
+'use strict';
 
-const Model = use('Model')
+const Model = use('Model');
 
-// TODO hooks that calculate total exp
 class User extends Model {
+  static boot () {
+    super.boot();
+    this.addHook('beforeCreate', 'UserHook.hashPassword');
+    this.addHook('beforeUpdate', 'UserHook.hashPassword');
+  }
+
   static get hidden () {
-    return ['created_at', 'updated_at']
+    return ['password', 'created_at', 'updated_at'];
   }
 
   bonusExps () {
-    return this.hasMany('App/Models/BonusExp')
+    return this.hasMany('App/Models/BonusExp');
   }
 
   projectParticipations () {
-    return this.hasMany('App/Models/UserProjectParticipation')
+    return this.hasMany('App/Models/UserProjectParticipation');
   }
 }
 
-module.exports = User
+module.exports = User;

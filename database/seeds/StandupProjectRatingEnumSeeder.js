@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /*
 |--------------------------------------------------------------------------
@@ -10,12 +10,12 @@
 |
 */
 
-const Database = use('Database')
+const Database = use('Database');
 
 class StandupProjectRatingEnumSeeder {
   async run () {
     await Database.table('standup_project_rating_enums')
-      .insert(StandupProjectRatingEnumSeeder.getInitialData())
+      .insert(StandupProjectRatingEnumSeeder.getInitialData());
   }
 
   static getInitialData () {
@@ -56,8 +56,8 @@ class StandupProjectRatingEnumSeeder {
         description: 'Great positive impact from our side',
         value: 120,
       },
-    ]
+    ];
   }
 }
 
-module.exports = StandupProjectRatingEnumSeeder
+module.exports = StandupProjectRatingEnumSeeder;

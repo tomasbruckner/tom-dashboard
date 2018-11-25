@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-const NuxtService = use('App/Services/Nuxt')
+const NuxtService = use('App/Services/Nuxt');
 
 class NuxtController {
   async render ({ request, response, session }) {
@@ -11,20 +11,20 @@ class NuxtController {
      *
      * @type {Boolean}
      */
-    response.implicitEnd = false
+    response.implicitEnd = false;
 
     /**
      * Since response is now handled by Nuxt, we should commit any session
      * values. This will make sure features like CSRF protection works as
      * expected.
      */
-    await session.commit()
+    await session.commit();
 
     /**
      * Finally handover request to nuxt
      */
-    await NuxtService.render(request.request, response.response)
+    await NuxtService.render(request.request, response.response);
   }
 }
 
-module.exports = NuxtController
+module.exports = NuxtController;

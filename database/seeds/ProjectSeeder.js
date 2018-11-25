@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /*
 |--------------------------------------------------------------------------
@@ -10,12 +10,12 @@
 |
 */
 
-const Database = use('Database')
+const Database = use('Database');
 
 class ProjectSeeder {
   async run () {
     await Database.table('projects')
-      .insert(ProjectSeeder.getInitialData())
+      .insert(ProjectSeeder.getInitialData());
   }
 
   static getInitialData () {
@@ -56,8 +56,8 @@ class ProjectSeeder {
         code: 'STR',
         is_active: true,
       },
-    ]
+    ];
   }
 }
 
-module.exports = ProjectSeeder
+module.exports = ProjectSeeder;

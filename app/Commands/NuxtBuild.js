@@ -1,7 +1,7 @@
-'use strict'
+'use strict';
 
-const { Command } = use('@adonisjs/ace')
-const NuxtService = use('App/Services/Nuxt')
+const { Command } = use('@adonisjs/ace');
+const NuxtService = use('App/Services/Nuxt');
 
 class NuxtBuild extends Command {
   /**
@@ -11,7 +11,7 @@ class NuxtBuild extends Command {
    * @return {String}
    */
   static get signature () {
-    return 'nuxtbuild'
+    return 'nuxtbuild';
   }
 
   /**
@@ -21,7 +21,7 @@ class NuxtBuild extends Command {
    * @return {String}
    */
   static get description () {
-    return 'Build for production the nuxt.js application.'
+    return 'Build for production the nuxt.js application.';
   }
 
   /**
@@ -32,9 +32,9 @@ class NuxtBuild extends Command {
    * @param  {Object} options [description]
    */
   async handle () {
-    this.info('Building nuxt.js application...')
-    await NuxtService.build(false)
+    this.info('Building nuxt.js application...');
+    await NuxtService.build(false);
   }
 }
 
-module.exports = NuxtBuild
+module.exports = NuxtBuild;

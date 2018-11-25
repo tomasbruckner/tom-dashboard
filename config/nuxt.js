@@ -1,27 +1,43 @@
-'use strict'
+'use strict';
 
-const resolve = require('path').resolve
+const resolve = require('path').resolve;
 
 module.exports = {
   /*
   ** Headers of the page
   */
   head: {
-    title: 'TechFides exp tracker',
+    title: 'Tom Dashboard',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'TechFides experience calculator and project tracker' }
+      { hid: 'description', name: 'description', content: 'Tom Dashboard' },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' }
-    ]
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' },
+    ],
   },
   plugins: ['~/plugins/vuetify.js'],
   css: [
-    '~/assets/style/app.styl'
+    '~/assets/style/app.styl',
   ],
+  modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/auth',
+  ],
+  auth: {
+    redirect: false,
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/api/auth/login', method: 'post', propertyName: 'token' },
+          logout: { url: '/api/auth/logout', method: 'post' },
+          user: { url: '/api/auth/me', method: 'get', propertyName: 'username' },
+        },
+      },
+    },
+  },
   /*
   ** Customize the progress bar color
   */
@@ -32,7 +48,7 @@ module.exports = {
   build: {
     vendor: [
       '~/plugins/vuetify.js',
-      'axios'
+      'axios',
     ],
     extractCSS: true,
     /*
@@ -44,10 +60,10 @@ module.exports = {
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
-          exclude: /(node_modules)/
-        })
+          exclude: /(node_modules)/,
+        });
       }
-    }
+    },
   },
-  srcDir: resolve(__dirname, '..', 'resources')
-}
+  srcDir: resolve(__dirname, '..', 'resources'),
+};

@@ -105,6 +105,7 @@ export const mutations = {
       isActive: u.is_active,
       lastName: u.last_name,
       totalExp: u.total_exp,
+      username: u.username,
     }));
   },
 };

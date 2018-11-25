@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const StandupModel = use('App/Models/Standup');
 const StandupProjectRatingEnumModel = use('App/Models/StandupProjectRatingEnum');
@@ -46,4 +46,4 @@ class ProjectRatingController {
   }
 }
 
-module.exports = ProjectRatingController
+module.exports = ProjectRatingController;

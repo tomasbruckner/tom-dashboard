@@ -8,10 +8,14 @@ class UserController {
       firstName,
       lastName,
       isActive,
+      password,
       totalExp,
-    } = request.only(['firstName', 'lastName', 'isActive', 'totalExp']);
+      username,
+    } = request.only(['firstName', 'lastName', 'isActive', 'password', 'totalExp', 'username']);
 
     return {
+      password,
+      username,
       first_name: firstName,
       last_name: lastName,
       is_active: isActive,
@@ -30,8 +34,12 @@ class UserController {
   async createUser ({ request, response, params }) {
     const user = new UserModel();
     user.fill(UserController.mapToDbEntity(request));
-    await user.save();
-
+    try {
+      console.log('x');
+      await user.save();
+    } catch (e) {
+      console.error(e);
+    }
     return user.toJSON();
   }
 

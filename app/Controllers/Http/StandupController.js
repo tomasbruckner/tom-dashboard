@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const StandupModel = use('App/Models/Standup');
 
@@ -45,4 +45,4 @@ class StandupController {
   }
 }
 
-module.exports = StandupController
+module.exports = StandupController;

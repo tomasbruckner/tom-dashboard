@@ -68,140 +68,139 @@
 </template>
 
 <script>
-  import axios from '~/plugins/axios';
-  import { mapState } from 'vuex';
-  import ProjectStatusPicker from '../components/ProjectStatusPicker';
-  import format from 'date-fns/format';
+import axios from '~/plugins/axios';
+import { mapState } from 'vuex';
+import format from 'date-fns/format';
 
-  export default {
-    async fetch ({ store, params }) {
-      await store.dispatch('getAllProjects');
+export default {
+  async fetch ({ store, params }) {
+    await store.dispatch('getAllProjects');
+  },
+  computed: {
+    ...mapState([
+      'allProjects',
+    ]),
+    headers: function () {
+      return [
+        {
+          text: 'Projekt',
+          align: 'center',
+          sortable: true,
+          value: 'code',
+        },
+        {
+          text: 'Popis',
+          align: 'center',
+          sortable: true,
+          value: 'description',
+        },
+        {
+          text: 'Aktivní',
+          align: 'center',
+          sortable: true,
+          value: 'isActive',
+        },
+        {
+          text: 'Akce',
+          align: 'center',
+          sortable: false,
+          value: 'actions',
+        },
+      ];
     },
-    computed: {
-      ...mapState([
-        'allProjects',
-      ]),
-      headers: function () {
-        return [
-          {
-            text: 'Projekt',
-            align: 'center',
-            sortable: true,
-            value: 'code',
-          },
-          {
-            text: 'Popis',
-            align: 'center',
-            sortable: true,
-            value: 'description',
-          },
-          {
-            text: 'Aktivní',
-            align: 'center',
-            sortable: true,
-            value: 'isActive',
-          },
-          {
-            text: 'Akce',
-            align: 'center',
-            sortable: false,
-            value: 'actions',
-          },
-        ];
+  },
+  data () {
+    return {
+      pagination: { sortBy: 'code' },
+      dialog: false,
+      modalTitle: '',
+      rules: {
+        required: value => !!value || 'Povinné.',
       },
+      modalItem: {
+        id: null,
+        code: '',
+        description: '',
+        isActive: true,
+      },
+      defaultModalItem: {
+        id: null,
+        code: '',
+        description: '',
+        isActive: true,
+      },
+    };
+  },
+  methods: {
+    createNewProject () {
+      this.modalTitle = 'Nový projekt';
+      this.dialog = true;
     },
-    data () {
-      return {
-        pagination: { sortBy: 'code' },
-        dialog: false,
-        modalTitle: '',
-        rules: {
-          required: value => !!value || 'Povinné.',
-        },
-        modalItem: {
-          id: null,
-          code: '',
-          description: '',
-          isActive: true,
-        },
-        defaultModalItem: {
-          id: null,
-          code: '',
-          description: '',
-          isActive: true,
-        },
+    editItem (item) {
+      this.modalItem = {
+        id: item.id,
+        code: item.code,
+        description: item.description,
+        isActive: item.isActive,
       };
+
+      this.modalTitle = 'Upravit projekt';
+      this.dialog = true;
     },
-    methods: {
-      createNewProject() {
-        this.modalTitle = 'Nový projekt';
-        this.dialog = true;
-      },
-      editItem (item) {
-        this.modalItem = {
-          id: item.id,
-          code: item.code,
-          description: item.description,
-          isActive: item.isActive,
-        };
+    async deleteItem (item) {
+      const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
 
-        this.modalTitle = 'Upravit projekt';
-        this.dialog = true;
-      },
-      async deleteItem (item) {
-        const confirmed = confirm(`Opravdu chcete smazat projekt ${item.code}?`);
-
-        if (confirmed) {
-          await axios.delete(`/api/projects/${item.id}`);
-          await this.$store.dispatch('getAllProjects');
-        }
-      },
-      close () {
-        this.dialog = false;
-        this.modalItem = { ...this.defaultModalItem };
-      },
-      async save () {
-        if (this.modalItem.id) {
-          await axios.put(`/api/projects/${this.modalItem.id}`,
-            {
-              ...this.modalItem,
-            });
-        } else {
-          await axios.post('/api/projects',
-            {
-              ...this.modalItem,
-            });
-        }
-
-        await this.$store.dispatch('getProjects');
+      if (confirmed) {
+        await axios.delete(`/api/projects/${item.id}`);
         await this.$store.dispatch('getAllProjects');
-        this.modalItem = { ...this.defaultModalItem };
-        this.dialog = false;
-      },
-      formatDate (date) {
-        if (!date) {
-          return '';
-        }
-
-        const d = new Date(date);
-
-        return format(d, 'DD/MM/YYYY');
-      },
+      }
     },
-  };
+    close () {
+      this.dialog = false;
+      this.modalItem = { ...this.defaultModalItem };
+    },
+    async save () {
+      if (this.modalItem.id) {
+        await axios.put(`/api/projects/${this.modalItem.id}`,
+          {
+            ...this.modalItem,
+          });
+      } else {
+        await axios.post('/api/projects',
+          {
+            ...this.modalItem,
+          });
+      }
+
+      await this.$store.dispatch('getProjects');
+      await this.$store.dispatch('getAllProjects');
+      this.modalItem = { ...this.defaultModalItem };
+      this.dialog = false;
+    },
+    formatDate (date) {
+      if (!date) {
+        return '';
+      }
+
+      const d = new Date(date);
+
+      return format(d, 'DD/MM/YYYY');
+    },
+  },
+};
 </script>
 
 <style>
-  .fullscreen {
-    width: 100%;
-    height: 100%;
-  }
+.fullscreen {
+  width: 100%;
+  height: 100%;
+}
 
-  .element {
-    font-size: 1.5em !important;
-  }
+.element {
+  font-size: 1.5em !important;
+}
 
-  .header {
-    font-size: 2em !important;
-  }
+.header {
+  font-size: 2em !important;
+}
 </style>
