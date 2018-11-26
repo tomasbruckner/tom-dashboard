@@ -54,12 +54,13 @@
       item-key="id"
       hide-actions
       fill-height
+      must-sort
       class='elevation-1 fullscreen'
     >
       <template slot='items' slot-scope='props'>
         <td class='text-xs-center element'>{{ `${props.item.firstName} ${props.item.lastName}` }}</td>
         <td class='text-xs-center element'>{{ props.item.username }}</td>
-        <td class='text-xs-center element'>{{ calculateLevel(props.item.totalExp) }}</td>
+        <td class='text-xs-center element'>{{ props.item.level }}</td>
         <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
         <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
         <td class="justify-center layout px-0">
@@ -101,25 +102,25 @@ export default {
           text: 'Jméno',
           align: 'center',
           sortable: true,
-          value: 'name',
+          value: 'firstName',
         },
         {
           text: 'Přihlašovací jméno',
           align: 'center',
           sortable: true,
-          value: 'name',
+          value: 'username',
+        },
+        {
+          text: 'Level',
+          align: 'center',
+          sortable: true,
+          value: 'level',
         },
         {
           text: 'Expy',
           align: 'center',
           sortable: true,
-          value: 'exp',
-        },
-        {
-          text: 'Level',
-          align: 'center',
-          sortable: false,
-          value: 'level',
+          value: 'totalExp',
         },
         {
           text: 'Aktivní',
@@ -209,12 +210,6 @@ export default {
 
       await this.$store.dispatch('getUsers');
       this.dialog = false;
-    },
-    calculateLevel (totalExp) {
-      const d = -500 + Math.sqrt(500 * 500 + 4 * 5 * totalExp);
-      const result = d / (2 * 5);
-
-      return Math.floor(result);
     },
   },
 };
