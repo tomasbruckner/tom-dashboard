@@ -16,7 +16,7 @@
                                 label="Přihlašovací jméno"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field :rules="[rules.required]" type="password" v-model="modalItem.password"
+                  <v-text-field type="password" v-model="modalItem.password"
                                 label="Heslo"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
@@ -26,7 +26,7 @@
                   <v-text-field :rules="[rules.required]" v-model="modalItem.lastName" label="Příjmení"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field :rules="[rules.required]" type="number" v-model="modalItem.totalExp"
+                  <v-text-field type="number" v-model="modalItem.totalExp"
                                 label="Expy"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
@@ -59,8 +59,8 @@
       <template slot='items' slot-scope='props'>
         <td class='text-xs-center element'>{{ `${props.item.firstName} ${props.item.lastName}` }}</td>
         <td class='text-xs-center element'>{{ props.item.username }}</td>
-        <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
         <td class='text-xs-center element'>{{ calculateLevel(props.item.totalExp) }}</td>
+        <td class='text-xs-center element'>{{ props.item.totalExp }}</td>
         <td class='text-xs-center element'>{{ props.item.isActive? 'ano' : 'ne' }}</td>
         <td class="justify-center layout px-0">
           <v-icon
