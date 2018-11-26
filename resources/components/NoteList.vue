@@ -8,7 +8,7 @@
               <v-icon @click="() => markNoteCompleted(item.id)" color="green">done</v-icon>
               <h2>{{ item.projectCode }}</h2>
             </v-layout>
-            <div>{{ item.text }}</div>
+            <div class="note-text">{{ item.text }}</div>
           </div>
         </v-card-text>
       </v-card>
@@ -43,5 +43,9 @@ export default {
 <style scoped>
 .card {
   width: 20%;
+}
+
+.note-text {
+  white-space: pre-wrap;
 }
 </style>
