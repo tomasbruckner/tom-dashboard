@@ -30,6 +30,13 @@ const getProjectParams = () => {
   };
 };
 
+const calculateLevel = (totalExp) => {
+  const d = -500 + Math.sqrt(500 * 500 + 4 * 5 * totalExp);
+  const result = d / (2 * 5);
+
+  return Math.floor(result);
+};
+
 const filterProjectsByRatings = (projects, ratings) => {
   const allowedProjectIds = {};
   for (const { standupProjectRating } of ratings) {
@@ -104,6 +111,7 @@ export const mutations = {
       id: u.id,
       isActive: u.is_active,
       lastName: u.last_name,
+      level: calculateLevel(u.total_exp),
       totalExp: u.total_exp,
       username: u.username,
     }));
