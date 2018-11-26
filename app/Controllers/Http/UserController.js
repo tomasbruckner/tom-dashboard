@@ -8,13 +8,11 @@ class UserController {
       firstName,
       lastName,
       isActive,
-      password,
       totalExp,
       username,
-    } = request.only(['firstName', 'lastName', 'isActive', 'password', 'totalExp', 'username']);
+    } = request.only(['firstName', 'lastName', 'isActive', 'totalExp', 'username']);
 
     return {
-      password,
       username,
       first_name: firstName,
       last_name: lastName,
@@ -34,6 +32,13 @@ class UserController {
   async createUser ({ request, response, params }) {
     const user = new UserModel();
     user.fill(UserController.mapToDbEntity(request));
+
+    if (!request.input('password')) {
+      response.status(422).send({ message: 'Unprocessable entity' });
+      return;
+    }
+
+    user.password = request.input('password');
     await user.save();
 
     return user.toJSON();
@@ -43,6 +48,11 @@ class UserController {
     const { id } = params;
     const user = await UserModel.find(id);
     user.merge(UserController.mapToDbEntity(request));
+
+    if (request.input('password')) {
+      user.password = request.input('password');
+    }
+
     await user.save();
 
     return user.toJSON();
