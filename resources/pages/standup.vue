@@ -88,6 +88,7 @@
               :project-rating='i.rating'
               :project-id='i.projectId'
               :standup-id='i.standupId'
+              :date="formatDate(item.standup.date)"
             />
           </td>
         </template>
