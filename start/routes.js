@@ -15,11 +15,17 @@
 
 const Route = use('Route');
 
+/**
+ * AUTH
+ */
 Route.post('/api/auth/login', 'AuthController.login')
   .validator('LoginValidator');
 Route.post('/api/auth/logout', 'AuthController.logout');
 Route.get('/api/auth/me', 'AuthController.me');
 
+/**
+ * NOTES
+ */
 Route
   .get('/api/notes', 'NoteController.getNotes');
 Route
@@ -29,6 +35,9 @@ Route
 Route
   .post('/api/notes/:id/completed', 'NoteController.markCompleted');
 
+/**
+ * PROJECTS
+ */
 Route
   .get('/api/projects', 'ProjectController.getProjects');
 Route
@@ -50,11 +59,17 @@ Route
 Route
   .delete('/api/projects/:id', 'ProjectController.deleteProject');
 
+/**
+ * PROJECT RATINGS
+ */
 Route
   .get('/api/projectRatings', 'ProjectRatingController.getProjectRatings');
 Route
   .post('/api/projectRatings', 'ProjectRatingController.setProjectRating');
 
+/**
+ * STANDUPS
+ */
 Route
   .get('/api/standups', 'StandupController.getStandups');
 Route
@@ -62,18 +77,27 @@ Route
 Route
   .delete('/api/standups', 'StandupController.deleteStandup');
 
+/**
+ * STATISTICS
+ */
+Route.get('/api/statistics/projects', 'StatisticsController.getProjectStatistics');
+
+/**
+ * USERS
+ */
 Route
   .get('/api/users', 'UserController.getUsers');
 Route
   .post('/api/users', 'UserController.createUser')
   .validator('StoreUserValidator');
-
 Route
   .put('/api/users/:id', 'UserController.editUser')
   .validator('StoreUserValidator');
-
 Route
   .delete('/api/users/:id', 'UserController.deleteUser');
 
+/**
+ * NUXT
+ */
 Route
   .any('*', 'NuxtController.render');

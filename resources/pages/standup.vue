@@ -177,7 +177,6 @@ export default {
   },
   data () {
     return {
-      standupMonth: '',
       modalItem: {
         standupMonth: null,
       },
