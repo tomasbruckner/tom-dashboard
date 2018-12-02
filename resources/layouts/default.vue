@@ -92,6 +92,7 @@ export default {
         { icon: 'apps', title: 'Dashboard', to: '/' },
         { icon: 'radio_button_unchecked', title: 'Standup', to: '/standup' },
         { icon: 'laptop_windows', title: 'Projekty', to: '/projects' },
+        { icon: 'bar_chart', title: 'Statistiky', to: '/statistics' },
         { icon: 'face', title: 'Uživatelé', to: '/users' },
       ],
       miniVariant: false,

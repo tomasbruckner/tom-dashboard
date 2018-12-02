@@ -19,10 +19,13 @@ class ProjectController {
 
   async getProjects ({ request, response, params }) {
     const { isActive } = request.get();
-    const projectsQuery = ProjectModel.query().with('notes');
+    const projectsQuery = ProjectModel
+      .query()
+      .with('notes');
 
     if (isActive === 'true') {
-      projectsQuery.where('is_active', true);
+      projectsQuery
+        .where('is_active', true);
     }
 
     const projects = await projectsQuery

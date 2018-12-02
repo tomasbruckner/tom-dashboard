@@ -22,11 +22,11 @@ class UserController {
   }
 
   async getUsers ({ request, response, params }) {
-    const notes = await UserModel
+    const users = await UserModel
       .query()
       .fetch();
 
-    return notes.toJSON();
+    return users.toJSON();
   }
 
   async createUser ({ request, response, params }) {

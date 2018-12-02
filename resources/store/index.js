@@ -3,6 +3,7 @@ import axios from '~/plugins/axios';
 export const state = () => ({
   notes: [],
   projects: [],
+  projectStatistics: [],
   standups: [],
   standupRatings: {},
   users: [],
@@ -98,6 +99,9 @@ export const mutations = {
 
     state.standupRatings = newStandupRatings;
   },
+  setProjectStatistics (state, projectStatistics) {
+    state.projectStatistics = projectStatistics;
+  },
   setNotes (state, notes) {
     state.notes = notes.map(n => ({
       id: n.id,
@@ -192,6 +196,14 @@ export const actions = {
     );
 
     commit('setNotes', notes.data);
+  },
+  async getProjectStatistics ({ commit }, params) {
+    const projectStatistics = await axios.get(
+      `/api/statistics/projects`,
+      { params },
+    );
+
+    commit('setProjectStatistics', projectStatistics.data);
   },
   async getUsers ({ commit }) {
     const users = await axios.get('/api/users');
