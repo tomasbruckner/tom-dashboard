@@ -17,7 +17,7 @@
           primary-title
         >
           <div class="flex-container">
-            {{ title || `Vyberte hodnocení - ${projectName}` }}
+            {{ `${date} - Vyberte hodnocení: ${projectName}` }}
             <v-icon
               @click="dialog = false"
               x-large
@@ -82,7 +82,7 @@ import axios from '~/plugins/axios';
 import { mapState } from 'vuex';
 
 export default {
-  props: ['projectId', 'standupId', 'projectRating', 'title'],
+  props: ['date', 'projectId', 'standupId', 'projectRating'],
   data () {
     return {
       dialog: false,
@@ -93,15 +93,15 @@ export default {
     ...mapState([
       'projects',
     ]),
-    icon: function () {
+    icon () {
       return this.getRatingIconFromId(this.projectRating);
     },
-    projectName: function () {
+    projectName () {
       return this.projects.find(p => p.id === this.projectId).code;
     },
   },
   methods: {
-    getClassName: function () {
+    getClassName () {
       let className = 'material-icons custom-font-size';
       switch (this.projectRating) {
         case 0:
@@ -120,7 +120,7 @@ export default {
           return '';
       }
     },
-    submit: async function (icon) {
+    async submit (icon) {
       this.dialog = false;
 
       try {
@@ -138,7 +138,7 @@ export default {
         console.error(e);
       }
     },
-    getRatingId: function (icon) {
+    getRatingId (icon) {
       switch (icon) {
         case 'HIATUS':
           return 0;
@@ -154,7 +154,7 @@ export default {
           return 5;
       }
     },
-    getRatingIcon: function (icon) {
+    getRatingIcon (icon) {
       switch (icon) {
         case 'HIATUS':
           return 'remove';
@@ -170,7 +170,7 @@ export default {
           return 'done';
       }
     },
-    getRatingIconFromId: function (icon) {
+    getRatingIconFromId (icon) {
       switch (icon) {
         case 0:
           return 'remove';
