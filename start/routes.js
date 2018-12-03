@@ -29,9 +29,11 @@ Route.get('/api/auth/me', 'AuthController.me');
 Route
   .get('/api/notes', 'NoteController.getNotes');
 Route
-  .post('/api/notes', 'NoteController.createNote');
+  .post('/api/notes', 'NoteController.createNote')
+  .validator('StoreNoteValidator');
 Route
-  .put('/api/notes/:id', 'NoteController.editNote');
+  .put('/api/notes/:id', 'NoteController.editNote')
+  .validator('StoreNoteValidator');
 Route
   .post('/api/notes/:id/completed', 'NoteController.markCompleted');
 
@@ -80,7 +82,8 @@ Route
 /**
  * STATISTICS
  */
-Route.get('/api/statistics/projects', 'StatisticsController.getProjectStatistics');
+Route
+  .get('/api/statistics/projects', 'StatisticsController.getProjectStatistics');
 
 /**
  * USERS

@@ -4,34 +4,37 @@
 
       <v-dialog v-model="noteDialog.isOpen" persistent max-width="500px">
         <v-btn slot="activator" color="primary" right>Přidat poznámku</v-btn>
-        <v-card>
-          <v-card-title>
-            <span class="headline">Přidat poznámku</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
+        <v-form @submit.prevent="createNote">
+          <v-card>
+            <v-card-title>
+              <span class="headline">Přidat poznámku</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container grid-list-md>
+                <v-layout wrap>
 
-                <v-flex xs12>
-                  <v-combobox
-                    v-model="noteDialog.selectedProject"
-                    :items="projectNames"
-                    label="Projekt"
-                  ></v-combobox>
-                </v-flex>
+                  <v-flex xs12>
+                    <v-combobox
+                      v-model="noteDialog.selectedProject"
+                      :items="projectNames"
+                      required
+                      label="Projekt"
+                    ></v-combobox>
+                  </v-flex>
 
-                <v-flex xs12>
-                  <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="closeNoteDialog()">Zavřít</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="createNote()">Uložit</v-btn>
-          </v-card-actions>
-        </v-card>
+                  <v-flex xs12>
+                    <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" flat @click.native="closeNoteDialog">Zavřít</v-btn>
+              <v-btn color="blue darken-1" flat type="submit">Uložit</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-form>
       </v-dialog>
 
       <v-btn color="info" right @click="_ => createStandup()">Přidat standup</v-btn>
@@ -241,7 +244,8 @@ export default {
       this.noteDialog = { ...this.defaultNoteDialog };
     },
     async createNote () {
-      if (!this.noteDialog.selectedProject || !this.noteDialog.note) {
+      debugger;
+      if (!this.noteDialog.note || !this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {
         return;
       }
 
