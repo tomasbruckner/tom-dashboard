@@ -7,11 +7,14 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'Tom Dashboard',
+    title: 'TechFides Dashboard',
+    htmlAttrs: {
+      lang: 'cs',
+    },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Tom Dashboard' },
+      { hid: 'description', name: 'description', content: 'TechFides Dashboard' },
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
