@@ -9,25 +9,24 @@
             <v-card-title>
               <span class="headline">Přidat poznámku</span>
             </v-card-title>
-            <v-card-text>
-              <v-container grid-list-md>
-                <v-layout wrap>
-
-                  <v-flex xs12>
-                    <v-combobox
-                      v-model="noteDialog.selectedProject"
-                      :items="projectNames"
-                      required
-                      label="Projekt"
-                    ></v-combobox>
-                  </v-flex>
-
-                  <v-flex xs12>
-                    <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
+            <div class="mx-3">
+              <v-layout column>
+                <v-flex>
+                  <v-combobox
+                    v-model="noteDialog.selectedProject"
+                    :items="projectNames"
+                    required
+                    label="Projekt"
+                  ></v-combobox>
+                </v-flex>
+                <v-flex>
+                  <date-picker-field label="Deadline"></date-picker-field>
+                </v-flex>
+                <v-flex>
+                  <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
+                </v-flex>
+              </v-layout>
+            </div>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" flat @click.native="closeNoteDialog">Zavřít</v-btn>
@@ -107,6 +106,7 @@ import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
 import format from 'date-fns/format';
 import { mapState } from 'vuex';
+import DatePickerField from '../components/DatePickerField'
 
 export default {
   fetch ({ store, params }) {
@@ -262,6 +262,7 @@ export default {
     },
   },
   components: {
+    DatePickerField,
     ProjectStatusPicker,
     NoteList,
   },

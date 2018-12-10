@@ -5,7 +5,8 @@
         <v-layout row nowrap>
           <h2>{{ item.projectCode }}</h2>
           <v-spacer></v-spacer>
-          <v-icon @click="markNoteCompleted(item.id)" color="green">done</v-icon>
+          <v-icon class="mr-1" size="20" @click="editNote(item)">edit</v-icon>
+          <v-icon size="20" @click="markNoteCompleted(item)" color="green">done</v-icon>
         </v-layout>
         <div class="note-text">{{ item.text }}</div>
       </v-card-text>
@@ -28,9 +29,12 @@ export default {
     ]),
   },
   methods: {
-    markNoteCompleted (noteId) {
+    editNote (note) {
+
+    },
+    markNoteCompleted (note) {
       if (confirm('Opravdu chcete označit poznámku za dokončenou?')) {
-        this.$store.dispatch('markNoteCompleted', noteId);
+        this.$store.dispatch('markNoteCompleted', note.id);
       }
     },
   },
