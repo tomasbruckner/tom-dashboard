@@ -105,7 +105,10 @@ export const mutations = {
   setNotes (state, notes) {
     state.notes = notes.map(n => ({
       id: n.id,
+      projectId: n.project.id,
       projectCode: n.project.code,
+      deadlineDate: n.deadline,
+      created: n.created_at,
       text: n.note,
     })).sort(sortByProperty.bind(this, 'projectCode'));
   },
@@ -181,11 +184,13 @@ export const actions = {
 
     commit('setNotes', notes.data);
   },
-  async createNote ({ commit }, note) {
+  async createNote ({ dispatch }, note) {
     await axios.post('/api/notes', note);
-    const res = await axios.get('/api/notes');
-
-    commit('setNotes', res.data);
+    dispatch('getNotes');
+  },
+  async editNote ({ dispatch }, note) {
+    await axios.put(`/api/notes/${note.id}`, note);
+    dispatch('getNotes');
   },
   async markNoteCompleted ({ commit }, noteId) {
     const [_, notes] = await Promise.all(

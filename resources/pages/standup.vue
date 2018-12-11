@@ -2,35 +2,37 @@
   <div>
     <v-layout row reverse>
 
-      <v-dialog v-model="noteDialog.isOpen" persistent max-width="500px">
-        <v-btn slot="activator" color="primary" right>Přidat poznámku</v-btn>
+      <v-dialog v-model="noteDialog.isOpen" max-width="500px">
+        <v-btn slot="activator" color="primary" right @click="resetNote">
+          Přidat cíl
+        </v-btn>
         <v-form @submit.prevent="createNote">
           <v-card>
             <v-card-title>
-              <span class="headline">Přidat poznámku</span>
+              <span class="headline">{{ noteDialogTitle }}</span>
             </v-card-title>
-            <v-card-text>
-              <v-container grid-list-md>
-                <v-layout wrap>
-
-                  <v-flex xs12>
-                    <v-combobox
-                      v-model="noteDialog.selectedProject"
-                      :items="projectNames"
-                      required
-                      label="Projekt"
-                    ></v-combobox>
-                  </v-flex>
-
-                  <v-flex xs12>
-                    <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
+            <div class="mx-3">
+              <v-layout column>
+                <v-flex>
+                  <v-combobox
+                    v-model="noteDialog.selectedProject"
+                    :items="projectNames"
+                    required
+                    label="Projekt"
+                  ></v-combobox>
+                </v-flex>
+                <v-flex>
+                  <date-picker-field v-model="noteDialog.deadlineDate" label="Deadline">
+                  </date-picker-field>
+                </v-flex>
+                <v-flex>
+                  <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
+                </v-flex>
+              </v-layout>
+            </div>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" flat @click.native="closeNoteDialog">Zavřít</v-btn>
+              <v-btn color="blue darken-1" flat @click.native="resetNote">Zavřít</v-btn>
               <v-btn color="blue darken-1" flat type="submit">Uložit</v-btn>
             </v-card-actions>
           </v-card>
@@ -97,7 +99,7 @@
         </template>
       </v-data-table>
     </v-layout>
-    <note-list></note-list>
+    <note-list @edit="editNote"></note-list>
   </div>
 </template>
 
@@ -105,8 +107,9 @@
 import axios from '~/plugins/axios';
 import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
-import format from 'date-fns/format';
+import { parse, format, addWeeks, setDay } from 'date-fns';
 import { mapState } from 'vuex';
+import DatePickerField from '../components/DatePickerField'
 
 export default {
   fetch ({ store, params }) {
@@ -178,6 +181,9 @@ export default {
         value: p.id,
       }));
     },
+    noteDialogTitle() {
+      return this.noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle';
+    },
   },
   data () {
     return {
@@ -187,13 +193,17 @@ export default {
       monthPickerIsOpen: false,
       noteDialog: {
         isOpen: false,
+        id: null,
         selectedProject: null,
+        deadlineDate: null,
         note: '',
       },
       defaultNoteDialog: {
         isOpen: false,
+        id: null,
         project: '',
         note: '',
+        deadlineDate: null,
       },
     };
   },
@@ -240,28 +250,53 @@ export default {
         rating: standup.standupProjectRating[p.id] || 0,
       }));
     },
-    closeNoteDialog () {
-      this.noteDialog = { ...this.defaultNoteDialog };
+    resetNote () {
+      // set deadline to next monday
+      let date = new Date();
+      date = addWeeks(date, 1);
+      date = setDay(date, 1);
+
+      this.noteDialog = {
+        ...this.defaultNoteDialog,
+        deadlineDate: date,
+      };
     },
     async createNote () {
-      debugger;
       if (!this.noteDialog.note || !this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {
         return;
       }
 
-      const newNote = {
+      const { deadlineDate } = this.noteDialog;
+      const note = {
+        id: this.noteDialog.id,
         projectId: this.noteDialog.selectedProject.value,
+        deadlineDate: deadlineDate.toISOString(),
         note: this.noteDialog.note,
       };
 
-      this.noteDialog = { ...this.defaultNoteDialog };
-      await this.$store.dispatch('createNote', newNote);
+      if (note.id) {
+        await this.$store.dispatch('editNote', note);
+      } else {
+        await this.$store.dispatch('createNote', note);
+      }
+
+      this.noteDialog.isOpen = false;
+    },
+    async editNote (note) {
+      this.noteDialog = {
+        isOpen: true,
+        id: note.id,
+        selectedProject: this.projectNames.find(v => v.value === note.projectId),
+        deadlineDate: parse(note.deadlineDate),
+        note: note.text,
+      }
     },
     async createStandup (i) {
       await this.$store.dispatch('createStandup');
     },
   },
   components: {
+    DatePickerField,
     ProjectStatusPicker,
     NoteList,
   },
