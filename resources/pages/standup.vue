@@ -262,7 +262,11 @@ export default {
       };
     },
     async createNote () {
-      if (!this.noteDialog.note || !this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {
+      if (
+        !this.noteDialog.note ||
+        !this.noteDialog.deadlineDate ||
+        !this.noteDialog.selectedProject ||
+        !this.noteDialog.selectedProject.value) {
         return;
       }
 
