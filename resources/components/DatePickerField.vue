@@ -15,13 +15,13 @@
       readonly
       clearable
       :value="dateFormatted"
-      @input="date = $event"
+      @input="datePicked"
     >
     </v-text-field>
     <v-date-picker
       :first-day-of-week="1"
-      v-model="date"
-      @input="menuDate = false"
+      v-model="modelDate"
+      @input="datePicked"
       no-title
     >
     </v-date-picker>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { format } from 'date-fns';
+import { parse, format, setHours, getHours } from 'date-fns';
 
 export default {
   name: 'DatePickerField',
@@ -38,21 +38,45 @@ export default {
       type: String,
       default: '',
     },
+    value: {
+      type: Date,
+      default: '',
+    },
   },
   data() {
     return {
-      date: null,
+      modelDate: null,
       menuDate: false,
     };
   },
+  created() {
+    this.modelDate = this.value ? format(this.value, 'YYYY-MM-DD') : null;
+  },
   computed: {
     dateFormatted() {
-      return this.date ? format(this.date, 'D. M. YYYY') : '';
+      return this.modelDate ? format(this.modelDate, 'D. M. YYYY') : '';
+    },
+  },
+  methods: {
+    datePicked(date) {
+      this.menuDate = false;
+      this.modelDate = date;
+
+      if (!date) {
+        this.$emit('input', null);
+        return;
+      }
+
+      const currentDate = new Date();
+      const parsedDate = parse(date);
+      const resultDate = setHours(parsedDate, getHours(currentDate));
+
+      this.$emit('input', resultDate);
     },
   },
   watch: {
-    date(v) {
-      this.$emit('input', v);
+    value(v) {
+      this.modelDate = v ? format(v, 'YYYY-MM-DD') : null;
     },
   },
 };

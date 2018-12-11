@@ -2,12 +2,16 @@
   <div>
     <v-layout row reverse>
 
-      <v-dialog v-model="noteDialog.isOpen" persistent max-width="500px">
-        <v-btn slot="activator" color="primary" right>Přidat poznámku</v-btn>
+      <v-dialog v-model="noteDialog.isOpen" max-width="500px">
+        <v-btn slot="activator" color="primary" right @click="resetNote">
+          Přidat poznámku
+        </v-btn>
         <v-form @submit.prevent="createNote">
           <v-card>
             <v-card-title>
-              <span class="headline">Přidat poznámku</span>
+              <span class="headline">
+                {{ noteDialog.id ? 'Upravit poznámku' : 'Přidat poznámku' }}
+              </span>
             </v-card-title>
             <div class="mx-3">
               <v-layout column>
@@ -20,7 +24,8 @@
                   ></v-combobox>
                 </v-flex>
                 <v-flex>
-                  <date-picker-field label="Deadline"></date-picker-field>
+                  <date-picker-field v-model="noteDialog.deadlineDate" label="Deadline">
+                  </date-picker-field>
                 </v-flex>
                 <v-flex>
                   <v-textarea v-model="noteDialog.note" label="Poznámka" required></v-textarea>
@@ -96,7 +101,7 @@
         </template>
       </v-data-table>
     </v-layout>
-    <note-list></note-list>
+    <note-list @edit="editNote"></note-list>
   </div>
 </template>
 
@@ -104,7 +109,7 @@
 import axios from '~/plugins/axios';
 import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
-import format from 'date-fns/format';
+import { parse, format } from 'date-fns';
 import { mapState } from 'vuex';
 import DatePickerField from '../components/DatePickerField'
 
@@ -187,13 +192,17 @@ export default {
       monthPickerIsOpen: false,
       noteDialog: {
         isOpen: false,
+        id: null,
         selectedProject: null,
+        deadlineDate: null,
         note: '',
       },
       defaultNoteDialog: {
         isOpen: false,
+        id: null,
         project: '',
         note: '',
+        deadlineDate: null,
       },
     };
   },
@@ -243,19 +252,38 @@ export default {
     closeNoteDialog () {
       this.noteDialog = { ...this.defaultNoteDialog };
     },
+    resetNote () {
+      this.noteDialog = { ...this.defaultNoteDialog };
+    },
     async createNote () {
-      debugger;
       if (!this.noteDialog.note || !this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {
         return;
       }
 
-      const newNote = {
+      const { deadlineDate } = this.noteDialog;
+      const note = {
+        id: this.noteDialog.id,
         projectId: this.noteDialog.selectedProject.value,
+        deadlineDate: deadlineDate.toISOString(),
         note: this.noteDialog.note,
       };
 
-      this.noteDialog = { ...this.defaultNoteDialog };
-      await this.$store.dispatch('createNote', newNote);
+      if (note.id) {
+        await this.$store.dispatch('editNote', note);
+      } else {
+        await this.$store.dispatch('createNote', note);
+      }
+
+      this.noteDialog.isOpen = false;
+    },
+    async editNote (note) {
+      this.noteDialog = {
+        isOpen: true,
+        id: note.id,
+        selectedProject: this.projectNames.find(v => v.value === note.projectId),
+        deadlineDate: parse(note.deadlineDate),
+        note: note.text,
+      }
     },
     async createStandup (i) {
       await this.$store.dispatch('createStandup');

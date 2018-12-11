@@ -7,7 +7,6 @@ class UserSchema extends Schema {
     this.alter('users', (table) => {
       table.dropColumn('alias');
       table.dropColumn('name');
-      table.dropColumn('project_id');
       table.string('first_name');
       table.string('last_name');
       table.boolean('is_active');

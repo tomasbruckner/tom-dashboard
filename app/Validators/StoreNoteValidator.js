@@ -3,8 +3,9 @@
 class StoreNoteValidator {
   get rules () {
     return {
-      note: `required|min:1`,
       projectId: 'required|number',
+      deadlineDate: 'required|date',
+      note: `required|min:1`,
     };
   }
 }

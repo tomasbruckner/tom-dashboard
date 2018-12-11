@@ -7,11 +7,13 @@ class NoteController {
     const {
       note,
       projectId,
-    } = request.only(['note', 'projectId']);
+      deadlineDate,
+    } = request.only(['note', 'projectId', 'deadlineDate']);
 
     return {
       note,
       is_active: 1,
+      deadline: new Date(deadlineDate),
       project_id: projectId,
     };
   }
