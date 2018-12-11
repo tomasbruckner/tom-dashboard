@@ -5,13 +5,13 @@ const Schema = use('Schema')
 
 class NoteSchema extends Schema {
   up () {
-    this.table('notes', (table) => {
+    this.alter('notes', (table) => {
       table.date('deadline');
     })
   }
 
   down () {
-    this.table('notes', (table) => {
+    this.alter('notes', (table) => {
       table.dropColumn('deadline');
     })
   }

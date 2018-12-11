@@ -9,9 +9,7 @@
         <v-form @submit.prevent="createNote">
           <v-card>
             <v-card-title>
-              <span class="headline">
-                {{ noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle' }}
-              </span>
+              <span class="headline">{{ noteDialogTitle }}</span>
             </v-card-title>
             <div class="mx-3">
               <v-layout column>
@@ -182,6 +180,9 @@ export default {
         text: p.code,
         value: p.id,
       }));
+    },
+    noteDialogTitle() {
+      return this.noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle';
     },
   },
   data () {

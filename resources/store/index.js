@@ -184,11 +184,11 @@ export const actions = {
 
     commit('setNotes', notes.data);
   },
-  async createNote ({ dispatch, commit }, note) {
+  async createNote ({ dispatch }, note) {
     await axios.post('/api/notes', note);
     dispatch('getNotes');
   },
-  async editNote ({ dispatch, commit }, note) {
+  async editNote ({ dispatch }, note) {
     await axios.put(`/api/notes/${note.id}`, note);
     dispatch('getNotes');
   },
