@@ -4,13 +4,13 @@
 
       <v-dialog v-model="noteDialog.isOpen" max-width="500px">
         <v-btn slot="activator" color="primary" right @click="resetNote">
-          Přidat poznámku
+          Přidat cíl
         </v-btn>
         <v-form @submit.prevent="createNote">
           <v-card>
             <v-card-title>
               <span class="headline">
-                {{ noteDialog.id ? 'Upravit poznámku' : 'Přidat poznámku' }}
+                {{ noteDialog.id ? 'Upravení cíle' : 'Vytvoření cíle' }}
               </span>
             </v-card-title>
             <div class="mx-3">
@@ -34,7 +34,7 @@
             </div>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" flat @click.native="closeNoteDialog">Zavřít</v-btn>
+              <v-btn color="blue darken-1" flat @click.native="resetNote">Zavřít</v-btn>
               <v-btn color="blue darken-1" flat type="submit">Uložit</v-btn>
             </v-card-actions>
           </v-card>
@@ -109,7 +109,7 @@
 import axios from '~/plugins/axios';
 import NoteList from '../components/NoteList';
 import ProjectStatusPicker from '../components/ProjectStatusPicker';
-import { parse, format } from 'date-fns';
+import { parse, format, addWeeks, setDay } from 'date-fns';
 import { mapState } from 'vuex';
 import DatePickerField from '../components/DatePickerField'
 
@@ -249,11 +249,16 @@ export default {
         rating: standup.standupProjectRating[p.id] || 0,
       }));
     },
-    closeNoteDialog () {
-      this.noteDialog = { ...this.defaultNoteDialog };
-    },
     resetNote () {
-      this.noteDialog = { ...this.defaultNoteDialog };
+      // set deadline to next monday
+      let date = new Date();
+      date = addWeeks(date, 1);
+      date = setDay(date, 1);
+
+      this.noteDialog = {
+        ...this.defaultNoteDialog,
+        deadlineDate: date,
+      };
     },
     async createNote () {
       if (!this.noteDialog.note || !this.noteDialog.selectedProject || !this.noteDialog.selectedProject.value) {

@@ -14,7 +14,8 @@
           <v-flex>
             {{ formatDate(item.created) }}
           </v-flex>
-          <v-flex class="text-xs-right">
+          <v-flex :class="getNoteDeadlineClass(item)">
+            <v-icon :color="getNoteDeadlineIconColor(item)" size="16">schedule</v-icon>
             {{ formatDate(item.deadlineDate) }}
           </v-flex>
         </v-layout>
@@ -24,7 +25,7 @@
 </template>
 
 <script>
-import { format, parse } from 'date-fns';
+import { format, parse, isPast, isToday } from 'date-fns';
 import { mapState } from 'vuex';
 
 export default {
@@ -39,6 +40,27 @@ export default {
     ]),
   },
   methods: {
+    getNoteDeadlineClass (item) {
+      const deadline = parse(item.deadlineDate);
+      const today = isToday(deadline);
+
+      return {
+        'text-xs-right': true,
+        'orange--text': today,
+        'red--text': !today && isPast(deadline),
+      };
+    },
+    getNoteDeadlineIconColor (item) {
+      const deadline = parse(item.deadlineDate);
+
+      if (isToday(deadline)) {
+        return 'orange';
+      } else if (isPast(deadline)) {
+        return 'red';
+      }
+
+      return undefined;
+    },
     formatDate (date) {
       return format(parse(date), 'D. M. YYYY');
     },
